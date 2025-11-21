@@ -30,7 +30,7 @@
                 Masuk dengan Google
             </button>
         </div>
-        <p class="text-teal-200 text-[10px] mt-8 opacity-60">Powered by Inferno-X</p>
+        <p class="text-teal-200 text-[10px] mt-8 opacity-60">Powered by Inferno-X Technology</p>
     </div>
 
     <div id="mainApp" class="hidden min-h-screen flex flex-col">
@@ -53,12 +53,13 @@
 
             <div class="bg-white p-5 rounded-2xl shadow-md mb-6 border border-slate-100">
                 <div class="flex justify-between items-center border-b pb-3 mb-4">
-                    <h2 class="text-lg font-bold text-teal-700">HemoCare</h2>
+                    <h2 class="text-lg font-bold text-teal-700">Input Data Harian</h2>
                     <span id="tglHariIni" class="text-xs bg-teal-100 text-teal-800 px-2 py-1 rounded-full font-bold"></span>
                 </div>
                 
                 <form id="hdForm" onsubmit="simpanKeCloud(event)">
                     <input type="date" id="tanggal" class="hidden">
+                    <input type="hidden" id="docId">
 
                     <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 mb-4">
                         <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2">Profil & Akses</label>
@@ -75,107 +76,92 @@
                         </div>
                     </div>
 
-                    <div class="flex space-x-4 mb-3">
-                        <div class="w-1/2">
-                            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider leading-tight">Berat Kering Sebelumnya</label>
-                            <input type="number" step="0.01" id="beratKering" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-teal-700 text-xl focus:ring-2 focus:ring-teal-500 outline-none transition mt-1" placeholder="..." required oninput="hitungOtomatis()">
-                        </div>
-                        <div class="w-1/2">
-                            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider leading-tight">Berat Datang</label>
-                            <input type="number" step="0.01" id="beratBasah" class="w-full bg-white border-2 border-orange-200 rounded-xl p-3 font-bold text-orange-600 text-xl focus:ring-2 focus:ring-orange-500 outline-none transition mt-1" placeholder="..." required oninput="hitungOtomatis()">
-                        </div>
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="text-[10px] font-bold text-green-600 uppercase tracking-wider leading-tight">Berat Sesudah HD (Pulang)</label>
-                        <div class="relative mt-1">
-                            <input type="number" step="0.01" id="beratSesudah" class="w-full bg-green-50 border border-green-200 rounded-xl p-3 font-bold text-green-700 text-xl focus:ring-2 focus:ring-green-500 outline-none transition" placeholder="Diisi setelah HD...">
-                        </div>
-                    </div>
-
-                    <div class="mb-4 bg-blue-50 p-3 rounded-xl border border-blue-100">
-                        <label class="text-xs font-bold text-blue-600 block mb-1">Makan/Minum saat HD (Liter)</label>
-                        <input type="number" step="0.01" id="intake" class="w-full bg-white border border-blue-200 rounded-lg p-2 text-lg font-semibold text-blue-800 placeholder-blue-200 focus:outline-none focus:border-blue-500" placeholder="Kosong = 0" oninput="hitungOtomatis()">
-                    </div>
-
-                    <div class="bg-yellow-50 p-3 rounded-xl border border-yellow-200 mb-5">
-                        <label class="text-xs font-bold text-yellow-800 block mb-2 flex items-center">
-                            <i class="fas fa-allergies mr-2"></i>Status Bengkak (Edema)
-                        </label>
-                        <select id="edemaLevel" class="w-full bg-white border border-yellow-300 text-yellow-900 text-sm rounded-lg p-3 font-semibold focus:ring-yellow-500 focus:border-yellow-500 outline-none mb-2" onchange="hitungOtomatis()">
-                            <option value="0">Tidak Ada / Normal</option>
-                            <option value="0.5">Ringan (+0.5 L)</option>
-                            <option value="1">Sedang (+1.0 L)</option>
-                            <option value="2">Berat (+2.0 L)</option>
-                        </select>
+                    <div class="border-l-4 border-orange-400 pl-3 mb-6">
+                        <h3 class="text-xs font-bold text-orange-600 uppercase mb-2">Awal Sesi (Pre-HD)</h3>
                         
-                        <div id="edemaDesc" class="text-[10px] p-2 rounded bg-yellow-100 text-yellow-700 border border-yellow-200 flex items-start">
-                            <i class="fas fa-info-circle mt-0.5 mr-1.5"></i>
-                            <span>Kondisi fisik normal, tidak ada penumpukan cairan terlihat.</span>
-                        </div>
-                    </div>
-
-                    <div class="bg-gradient-to-br from-slate-800 to-slate-900 p-4 rounded-2xl mb-5 text-center border border-slate-600 shadow-xl relative overflow-hidden text-white">
-                        
-                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Target Penarikan (UF Goal)</p>
-                        <h3 id="valUF" class="text-5xl font-black text-teal-400 my-2 tracking-tight">0.00 <span class="text-xl font-medium text-slate-400">L</span></h3>
-                        
-                        <div class="border-t border-slate-600 my-3"></div>
-
-                        <div class="grid grid-cols-2 gap-4 divide-x divide-slate-600">
-                            <div class="flex flex-col items-center">
-                                <span class="text-[9px] bg-teal-600 text-white px-2 py-0.5 rounded mb-1">DURASI (Max 5 Jam)</span>
-                                <div class="flex items-baseline space-x-1">
-                                    <span id="saranJam" class="text-2xl font-bold text-white">4.0</span>
-                                    <span class="text-xs text-slate-400">Jam</span>
-                                </div>
-                                <p id="saranNote" class="text-[9px] text-slate-400 mt-1 italic">Speed Normal</p>
+                        <div class="flex space-x-3 mb-3">
+                            <div class="w-1/2">
+                                <label class="text-[10px] font-bold text-slate-400 uppercase">BK Sebelumnya</label>
+                                <input type="number" step="0.01" id="beratKering" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 font-bold text-teal-700 text-lg mt-1" required oninput="hitungOtomatis()">
                             </div>
-
-                            <div class="flex flex-col items-center pl-4">
-                                <span class="text-[9px] bg-red-600 text-white px-2 py-0.5 rounded mb-1">SARAN Qb</span>
-                                <div class="flex items-baseline space-x-1">
-                                    <span id="saranQb" class="text-2xl font-bold text-red-400">200</span>
-                                    <span class="text-xs text-slate-400">ml/m</span>
-                                </div>
-                                <p class="text-[9px] text-slate-400 mt-1 italic" id="aksesNote">Sesuai Akses</p>
+                            <div class="w-1/2">
+                                <label class="text-[10px] font-bold text-slate-400 uppercase">Berat Datang</label>
+                                <input type="number" step="0.01" id="beratBasah" class="w-full bg-white border-2 border-orange-200 rounded-xl p-2 font-bold text-orange-600 text-lg mt-1" required oninput="hitungOtomatis()">
                             </div>
                         </div>
 
-                        <div class="flex justify-center items-center space-x-2 text-[10px] text-slate-400 mt-3 bg-white/10 py-1 rounded-lg mx-4">
-                            <span id="infoIDWG">Naik: 0</span>
-                            <span>+</span>
-                            <span id="infoIntake">Makan: 0</span>
-                            <span id="infoEdema" class="hidden text-yellow-400 font-bold bg-yellow-900/50 px-1 rounded"></span>
+                        <div class="flex space-x-3">
+                            <div class="w-1/2">
+                                <label class="text-[10px] font-bold text-slate-400 uppercase">Tensi Awal</label>
+                                <input type="text" id="tensiPre" class="w-full bg-white border border-slate-300 rounded-xl p-2 font-bold text-slate-600 text-md mt-1" placeholder="120/80">
+                            </div>
+                            <div class="w-1/2">
+                                <label class="text-[10px] font-bold text-slate-400 uppercase">Tingkat Edema</label>
+                                <select id="edemaLevel" class="w-full bg-white border border-yellow-300 text-yellow-900 text-xs rounded-xl p-2.5 font-semibold mt-1" onchange="hitungOtomatis()">
+                                    <option value="0">Normal</option>
+                                    <option value="0.5">Ringan (+0.5)</option>
+                                    <option value="1">Sedang (+1.0)</option>
+                                    <option value="2">Berat (+2.0)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                             <label class="text-[10px] font-bold text-slate-400 uppercase">Makan/Minum (L)</label>
+                             <input type="number" step="0.01" id="intake" class="w-full bg-white border border-blue-200 rounded-lg p-2 text-sm font-semibold text-blue-800" placeholder="0" oninput="hitungOtomatis()">
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-800 p-4 rounded-2xl mb-6 text-center text-white shadow-lg">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Target Penarikan (UF)</p>
+                        <h3 id="valUF" class="text-4xl font-black text-teal-400 my-1">0.00 <span class="text-lg text-slate-400">L</span></h3>
+                        
+                        <div class="grid grid-cols-2 gap-2 mt-3 border-t border-slate-600 pt-2">
+                             <div>
+                                 <p class="text-[9px] text-slate-400">DURASI (Max 5 Jam)</p>
+                                 <p class="font-bold text-lg"><span id="saranJam">4.0</span> <span class="text-xs font-normal">Jam</span></p>
+                             </div>
+                             <div>
+                                 <p class="text-[9px] text-slate-400">Qb (Pompa)</p>
+                                 <p class="font-bold text-lg text-red-400"><span id="saranQb">0</span></p>
+                             </div>
+                        </div>
+                        <p id="saranNote" class="text-[9px] text-slate-400 mt-2 italic">Speed Normal</p>
+                    </div>
+
+                    <div class="border-l-4 border-green-400 pl-3 mb-6 bg-green-50/50 p-2 rounded-r-xl">
+                        <h3 class="text-xs font-bold text-green-600 uppercase mb-2 flex items-center">
+                            Akhir Sesi (Post-HD)
+                            <span class="ml-2 text-[9px] bg-green-200 text-green-800 px-2 rounded-full">Diisi Belakangan</span>
+                        </h3>
+                        
+                        <div class="flex space-x-3">
+                            <div class="w-1/2">
+                                <label class="text-[10px] font-bold text-slate-400 uppercase">Berat Pulang</label>
+                                <input type="number" step="0.01" id="beratSesudah" class="w-full bg-white border border-green-300 rounded-xl p-2 font-bold text-green-700 text-lg mt-1 focus:ring-2 focus:ring-green-500 outline-none" placeholder="...">
+                            </div>
+                            <div class="w-1/2">
+                                <label class="text-[10px] font-bold text-slate-400 uppercase">Tensi Pulang</label>
+                                <input type="text" id="tensiPost" class="w-full bg-white border border-green-300 rounded-xl p-2 font-bold text-green-700 text-md mt-1 focus:ring-2 focus:ring-green-500 outline-none" placeholder="120/80">
+                            </div>
                         </div>
                     </div>
 
                     <button type="submit" id="btnSimpan" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-4 rounded-xl shadow-lg transition transform active:scale-95 flex justify-center items-center">
-                        <span>Simpan Data</span> <i class="fas fa-cloud-upload-alt ml-2"></i>
+                        <span id="btnText">Simpan Data</span> <i class="fas fa-cloud-upload-alt ml-2"></i>
                     </button>
                 </form>
             </div>
 
-            <div class="bg-white p-5 rounded-2xl shadow-md mb-6 border border-slate-100">
-                <h2 class="text-xs font-bold text-slate-400 uppercase mb-3 tracking-wider">Trend Massa Tubuh (Berat Kering)</h2>
-                <div class="h-64 relative">
-                    <canvas id="hdChart"></canvas>
-                    <div id="chartLoading" class="absolute inset-0 flex items-center justify-center bg-white/90 z-10 hidden">
-                        <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-8 w-8"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white p-5 rounded-2xl shadow-md border border-slate-100">
+            <div class="bg-white p-5 rounded-2xl shadow-md border border-slate-100 mb-10">
                 <h2 class="text-xs font-bold text-slate-400 uppercase mb-4 tracking-wider">Riwayat Terakhir</h2>
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm text-left text-slate-500">
                         <thead class="text-[10px] text-slate-400 uppercase bg-slate-50 border-b">
                             <tr>
                                 <th class="px-2 py-3 font-bold">Tgl</th>
-                                <th class="px-2 py-3 font-bold text-orange-500">In</th>
-                                <th class="px-2 py-3 font-bold text-green-600">Out</th>
-                                <th class="px-2 py-3 font-bold text-right">UF</th>
+                                <th class="px-2 py-3 font-bold text-orange-500">Pre</th>
+                                <th class="px-2 py-3 font-bold text-green-600">Post</th>
+                                <th class="px-2 py-3 font-bold text-right">Tensi</th>
                             </tr>
                         </thead>
                         <tbody id="historyTableBody"></tbody>
@@ -188,7 +174,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, query, where, orderBy, getDocs, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, updateDoc, doc, query, where, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         // --- KONFIGURASI HEMOCARE ---
         const firebaseConfig = {
@@ -216,8 +202,8 @@
                 document.getElementById('loginPage').classList.remove('flex');
                 document.getElementById('mainApp').classList.remove('hidden');
                 document.getElementById('userName').innerText = user.displayName.split(" ")[0];
-                loadDataCloud();
                 loadProfilLokal(); 
+                loadDataCloud(); // Ini akan auto-cek data hari ini
             } else {
                 currentUser = null;
                 document.getElementById('loginPage').classList.remove('hidden');
@@ -226,7 +212,6 @@
             }
         });
 
-        // --- SIMPAN PROFIL LOKAL ---
         window.simpanProfilLokal = () => {
             localStorage.setItem('hemo_usia', document.getElementById('usia').value);
             localStorage.setItem('hemo_gender', document.getElementById('gender').value);
@@ -242,118 +227,89 @@
             if(a) document.getElementById('akses').value = a;
         };
 
-        // --- LOGIKA UTAMA ---
         const today = new Date();
-        document.getElementById('tanggal').valueAsDate = today;
+        const todayStr = today.toISOString().split('T')[0]; // YYYY-MM-DD
+        document.getElementById('tanggal').value = todayStr;
         document.getElementById('tglHariIni').innerText = today.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'short' });
 
         window.hitungOtomatis = () => {
             let bKering = parseFloat(document.getElementById('beratKering').value) || 0;
             let bBasah = parseFloat(document.getElementById('beratBasah').value) || 0;
             let inputIntake = document.getElementById('intake').value;
-            
-            // Ambil Nilai Edema
             let edemaVal = parseFloat(document.getElementById('edemaLevel').value) || 0;
             
-            // UPDATE DESKRIPSI EDEMA (LOGIKA BARU)
-            const edemaDesc = document.getElementById('edemaDesc');
-            const edemaDescText = edemaDesc.querySelector('span');
-            
-            if(edemaVal === 0) {
-                edemaDesc.className = "text-[10px] p-2 rounded bg-yellow-50 text-yellow-700 border border-yellow-100 flex items-start";
-                edemaDescText.innerText = "Kondisi fisik normal, tidak ada penumpukan cairan terlihat.";
-            } else if(edemaVal === 0.5) {
-                edemaDesc.className = "text-[10px] p-2 rounded bg-yellow-100 text-yellow-800 border border-yellow-200 flex items-start";
-                edemaDescText.innerText = "Lokasi: Punggung kaki & mata kaki. (Pitting Edema +1)";
-            } else if(edemaVal === 1.0) {
-                edemaDesc.className = "text-[10px] p-2 rounded bg-orange-100 text-orange-800 border border-orange-200 flex items-start";
-                edemaDescText.innerText = "Lokasi: Naik hingga betis/tungkai bawah. (Pitting Edema +2)";
-            } else if(edemaVal === 2.0) {
-                edemaDesc.className = "text-[10px] p-2 rounded bg-red-100 text-red-800 border border-red-200 flex items-start";
-                edemaDescText.innerText = "Lokasi: Meluas ke paha, perut, atau seluruh tubuh (Anasarka).";
-            }
-
             let usia = parseInt(document.getElementById('usia').value) || 50;
             let gender = document.getElementById('gender').value;
             let akses = document.getElementById('akses').value; 
 
-            // 1. Hitung Cairan
             let intakeVal = inputIntake === "" ? 0 : parseFloat(inputIntake);
             let idwg = bBasah - bKering;
             if(idwg < 0) idwg = 0;
             
             let totalUF = idwg + intakeVal + edemaVal;
 
-            // 2. LOGIKA WAKTU
+            // Logika Waktu
             let speedFactor = 13; 
             if(usia > 60) speedFactor = 10; 
             if(gender === 'wanita') speedFactor -= 1; 
-
             let maxUFR = (bKering * speedFactor) / 1000; 
             let calculatedJam = (maxUFR > 0) ? totalUF / maxUFR : 0;
-            
             let finalJam = calculatedJam;
             if(finalJam < 4.0) finalJam = 4.0;
             if(finalJam > 5.0) finalJam = 5.0;
 
-            // 3. LOGIKA Qb
+            // Logika Qb
             let targetQb = bKering * 4;
             if(akses === 'cdl') { if(targetQb > 230) targetQb = 230; }
             if(usia > 70) { if(targetQb > 250) targetQb = 250; }
             targetQb = Math.floor(targetQb / 10) * 10;
             if(targetQb < 150) targetQb = 150;
 
-            // 4. Render Hasil
+            // Render
             document.getElementById('valUF').innerText = totalUF.toFixed(2);
             document.getElementById('saranJam').innerText = finalJam.toFixed(1);
             document.getElementById('saranQb').innerText = targetQb;
-            document.getElementById('aksesNote').innerText = (akses === 'cdl') ? "Mode CDL" : "Mode Cimino";
             
             let realSpeed = (finalJam > 0) ? (totalUF / finalJam).toFixed(2) : 0;
             let noteElement = document.getElementById('saranNote');
             if(realSpeed > 0.85) {
                 noteElement.innerText = `⚠️ SPEED: ${realSpeed} L/jam!`;
-                noteElement.classList.remove('text-slate-400');
                 noteElement.classList.add('text-red-400', 'font-bold', 'animate-pulse');
             } else {
                 noteElement.innerText = `Speed Aman: ${realSpeed} L/jam`;
-                noteElement.classList.add('text-slate-400');
                 noteElement.classList.remove('text-red-400', 'font-bold', 'animate-pulse');
-            }
-
-            // Info Footer
-            document.getElementById('infoIDWG').innerText = `Naik: ${idwg.toFixed(2)}`;
-            document.getElementById('infoIntake').innerText = `Makan: ${intakeVal}`;
-            
-            const infoEdema = document.getElementById('infoEdema');
-            if(edemaVal > 0) {
-                infoEdema.classList.remove('hidden');
-                infoEdema.innerText = `+ Edema ${edemaVal}`;
-            } else {
-                infoEdema.classList.add('hidden');
             }
         };
 
-        // --- SIMPAN & LOAD ---
+        // --- LOGIKA SIMPAN / UPDATE ---
         window.simpanKeCloud = async (e) => {
             e.preventDefault();
             if(!currentUser) return alert("Silahkan login ulang.");
 
             const btn = document.getElementById('btnSimpan');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<div class="loader ease-linear rounded-full border-2 border-t-2 border-white h-5 w-5"></div>';
+            const btnText = document.getElementById('btnText');
+            const originalText = btnText.innerText;
+            btnText.innerText = "Menyimpan...";
             btn.disabled = true;
 
+            // Ambil nilai input
             const intakeVal = document.getElementById('intake').value === "" ? 0 : parseFloat(document.getElementById('intake').value);
             const bbSesudahVal = document.getElementById('beratSesudah').value === "" ? null : parseFloat(document.getElementById('beratSesudah').value);
             const edemaVal = parseFloat(document.getElementById('edemaLevel').value) || 0;
+            const tensiPreVal = document.getElementById('tensiPre').value;
+            const tensiPostVal = document.getElementById('tensiPost').value;
+            
+            // Cek apakah kita sedang UPDATE data yang sudah ada (Edit Mode)
+            const docId = document.getElementById('docId').value;
 
-            const dataBaru = {
+            const dataPayload = {
                 uid: currentUser.uid,
                 date: document.getElementById('tanggal').value,
                 bk: parseFloat(document.getElementById('beratKering').value),
                 bb: parseFloat(document.getElementById('beratBasah').value),
                 bb_sesudah: bbSesudahVal,
+                tensi_pre: tensiPreVal, // Tensi Awal
+                tensi_post: tensiPostVal, // Tensi Akhir
                 intake: intakeVal,
                 uf: document.getElementById('valUF').innerText,
                 edema_level: edemaVal,
@@ -361,36 +317,31 @@
             };
 
             try {
-                await addDoc(collection(db, "riwayat_hd"), dataBaru);
-                document.getElementById('hdForm').reset();
-                document.getElementById('tanggal').valueAsDate = new Date();
-                loadProfilLokal(); 
+                if (docId) {
+                    // --- MODE UPDATE (Jika data hari ini sudah ada) ---
+                    const docRef = doc(db, "riwayat_hd", docId);
+                    await updateDoc(docRef, dataPayload);
+                    alert("Data berhasil diperbarui (Update)!");
+                } else {
+                    // --- MODE BUAT BARU ---
+                    await addDoc(collection(db, "riwayat_hd"), dataPayload);
+                    alert("Data baru tersimpan!");
+                }
                 
-                document.getElementById('valUF').innerText = "0.00";
-                document.getElementById('saranJam').innerText = "4.0";
-                document.getElementById('saranQb').innerText = "0";
-                document.getElementById('infoEdema').classList.add('hidden');
-                document.getElementById('infoIDWG').innerText = "Naik: 0";
-                document.getElementById('saranNote').innerText = "Speed Normal";
-                // Reset deskripsi edema ke normal
-                document.getElementById('edemaDesc').className = "text-[10px] p-2 rounded bg-yellow-50 text-yellow-700 border border-yellow-100 flex items-start";
-                document.getElementById('edemaDesc').querySelector('span').innerText = "Kondisi fisik normal, tidak ada penumpukan cairan terlihat.";
-                
-                await loadDataCloud(); 
+                await loadDataCloud(); // Refresh table & form status
             } catch (error) {
                 console.error(error);
                 alert("Gagal menyimpan: " + error.message);
             } finally {
-                btn.innerHTML = originalText;
+                btnText.innerText = originalText;
                 btn.disabled = false;
             }
         };
 
         async function loadDataCloud() {
             if(!currentUser) return;
-            document.getElementById('chartLoading').classList.remove('hidden');
 
-            const q = query(collection(db, "riwayat_hd"), where("uid", "==", currentUser.uid), orderBy("date", "asc"));
+            const q = query(collection(db, "riwayat_hd"), where("uid", "==", currentUser.uid), orderBy("date", "desc")); // Descending agar terbaru diatas
 
             try {
                 const querySnapshot = await getDocs(q);
@@ -398,40 +349,65 @@
                 const tbody = document.getElementById('historyTableBody');
                 tbody.innerHTML = '';
 
-                querySnapshot.forEach((doc) => {
-                    const item = doc.data();
+                let todayDataFound = false;
+
+                querySnapshot.forEach((docSnap) => {
+                    const item = docSnap.data();
+                    item.id = docSnap.id; // Simpan ID Dokumen
                     historyData.push(item);
-                    let displayBBSesudah = item.bb_sesudah ? `<strong>${item.bb_sesudah}</strong>` : '-';
-                    
-                    let edemaBadge = '';
-                    if(item.edema_level > 0) {
-                        edemaBadge = `<span class="text-[9px] bg-yellow-100 text-yellow-800 px-1 rounded ml-1">+${item.edema_level}</span>`;
-                    } else if (item.edema === true) { 
-                        edemaBadge = `<span class="text-[9px] bg-yellow-100 text-yellow-800 px-1 rounded ml-1">Edema</span>`;
+
+                    // --- LOGIKA AUTO-FILL HARI INI ---
+                    if (item.date === todayStr && !todayDataFound) {
+                        todayDataFound = true;
+                        // Isi form dengan data yang sudah ada
+                        document.getElementById('docId').value = item.id; // Set ID untuk mode update
+                        document.getElementById('beratKering').value = item.bk;
+                        document.getElementById('beratBasah').value = item.bb;
+                        document.getElementById('intake').value = item.intake;
+                        document.getElementById('edemaLevel').value = item.edema_level || 0;
+                        document.getElementById('tensiPre').value = item.tensi_pre || "";
+                        
+                        // Isi Data Post jika sudah ada
+                        if(item.bb_sesudah) document.getElementById('beratSesudah').value = item.bb_sesudah;
+                        if(item.tensi_post) document.getElementById('tensiPost').value = item.tensi_post;
+
+                        // Ubah Tombol jadi "Update"
+                        document.getElementById('btnText').innerText = "Update Data Hari Ini";
+                        document.getElementById('btnSimpan').classList.remove('bg-teal-600');
+                        document.getElementById('btnSimpan').classList.add('bg-blue-600');
+                        
+                        // Hitung ulang rumus
+                        hitungOtomatis();
                     }
 
+                    // Render Tabel
+                    let displayBBSesudah = item.bb_sesudah ? `<strong>${item.bb_sesudah}</strong>` : '-';
+                    let displayTensi = `${item.tensi_pre || '-'} <i class="fas fa-arrow-right text-[8px]"></i> ${item.tensi_post || '-'}`;
+                    
                     let row = `
                         <tr class="bg-white border-b hover:bg-slate-50 transition">
-                            <td class="px-2 py-3 text-xs text-slate-500">
-                                ${formatTglIndo(item.date)}
-                                ${edemaBadge}
-                            </td>
+                            <td class="px-2 py-3 text-xs text-slate-500">${formatTglIndo(item.date)}</td>
                             <td class="px-2 py-3 text-xs text-orange-600 font-medium">${item.bb}</td>
                             <td class="px-2 py-3 text-xs text-green-600">${displayBBSesudah}</td>
-                            <td class="px-2 py-3 font-bold text-slate-800 text-right">${item.uf}L</td>
+                            <td class="px-2 py-3 text-[10px] text-slate-600">${displayTensi}</td>
                         </tr>
                     `;
-                    tbody.insertAdjacentHTML('afterbegin', row);
+                    tbody.insertAdjacentHTML('beforeend', row);
                 });
 
-                if(historyData.length > 0) {
-                    document.getElementById('beratKering').value = historyData[historyData.length - 1].bk;
+                // Jika TIDAK ada data hari ini, pastikan form bersih (kecuali BK terakhir)
+                if (!todayDataFound && historyData.length > 0) {
+                    document.getElementById('docId').value = ""; // Reset ID
+                    document.getElementById('btnText').innerText = "Simpan Data Baru";
+                    document.getElementById('btnSimpan').classList.add('bg-teal-600');
+                    document.getElementById('btnSimpan').classList.remove('bg-blue-600');
+                    
+                    // Ambil BK dari sesi sebelumnya
+                    document.getElementById('beratKering').value = historyData[0].bk; // Ambil data ke-0 karena sudah sorted desc
                 }
-                updateChartCloud(historyData);
+
             } catch (error) {
                 console.log("Error load data", error);
-            } finally {
-                document.getElementById('chartLoading').classList.add('hidden');
             }
         }
 
@@ -439,53 +415,6 @@
             const parts = dateString.split('-');
             return `${parts[2]}/${parts[1]}`;
         }
-
-        let myChart = null;
-        function updateChartCloud(data) {
-            const ctx = document.getElementById('hdChart').getContext('2d');
-            if (myChart) myChart.destroy();
-            const recentData = data.slice(-10); 
-
-            myChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: recentData.map(d => formatTglIndo(d.date)),
-                    datasets: [
-                        {
-                            label: 'Target Kering',
-                            data: recentData.map(d => d.bk),
-                            borderColor: '#0d9488',
-                            backgroundColor: 'rgba(13, 148, 136, 0.1)',
-                            borderWidth: 3,
-                            pointRadius: 4,
-                            fill: true,
-                            tension: 0.3
-                        },
-                        {
-                            label: 'Berat Datang',
-                            data: recentData.map(d => d.bb),
-                            borderColor: '#f97316',
-                            borderDash: [5, 5],
-                            borderWidth: 2,
-                            pointRadius: 2,
-                            tension: 0.3
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { 
-                        legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } }
-                    },
-                    scales: {
-                        y: { grid: { borderDash: [2, 4] }, ticks: { callback: function(value) { return value + ' kg'; } } },
-                        x: { grid: { display: false } }
-                    }
-                }
-            });
-        }
     </script>
 </body>
 </html>
-
