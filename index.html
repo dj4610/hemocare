@@ -79,7 +79,7 @@
 
                     <div class="flex space-x-3 mb-4">
                         <div class="w-1/2">
-                            <label class="text-[10px] font-bold text-slate-400 uppercase">Berat Kering Sebelumnya</label>
+                            <label class="text-[10px] font-bold text-slate-400 uppercase">BK Sebelumnya</label>
                             <input type="number" step="0.01" id="beratKering" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 font-bold text-teal-700 text-lg mt-1" required oninput="hitungOtomatis()">
                         </div>
                         <div class="w-1/2">
@@ -136,7 +136,7 @@
                                  <p id="saranNote" class="text-[8px] text-slate-400 mt-1">Normal</p>
                              </div>
                              <div class="bg-slate-100 p-2 rounded-lg border border-slate-200">
-                                 <p class="text-[9px] text-slate-500 uppercase mb-1">Saran Qb (Pompa)</p>
+                                 <p class="text-[9px] text-slate-500 uppercase mb-1">Saran Qb</p>
                                  <p class="font-bold text-red-500 text-xl"><span id="saranQb">200</span></p>
                                  <p id="aksesNote" class="text-[8px] text-slate-400 mt-1">Standar RS</p>
                              </div>
@@ -162,6 +162,13 @@
                              <label class="text-[10px] font-bold text-green-600 uppercase">Nadi Pulang</label>
                              <input type="number" id="nadiPost" class="w-full bg-white border border-green-300 rounded-xl p-2 font-bold text-green-700 outline-none" placeholder="80">
                         </div>
+                    </div>
+
+                    <div class="bg-red-50 p-4 rounded-xl border border-red-200 mb-6">
+                        <label class="text-xs font-bold text-red-800 block mb-2 flex items-center">
+                            <i class="fas fa-notes-medical mr-2"></i>Catatan / Keluhan Pasien
+                        </label>
+                        <textarea id="catatan" rows="3" class="w-full bg-white border border-red-300 rounded-xl p-3 text-sm text-slate-700 focus:ring-red-500 outline-none" placeholder="Contoh: Pasien mengeluh mual di jam ke-3, kram kaki kiri, pusing berputar..."></textarea>
                     </div>
 
                     <button type="submit" id="btnSimpan" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-4 rounded-xl shadow-lg transition transform active:scale-95 flex justify-center items-center">
@@ -263,7 +270,7 @@
             else if(val === 1.0) desc.innerText = "BERAT: Bengkak meluas sampai paha, perut, atau seluruh tubuh.";
         }
 
-        // --- FUNGSI ADAPTIF QB (PERBAIKAN: PRIORITAS 200) ---
+        // --- ADAPTIVE QB ---
         window.updateQbAndSpeed = () => {
             const bk = parseFloat(document.getElementById('beratKering').value) || 0;
             const time = parseFloat(document.getElementById('saranJam').value) || 4.0; 
@@ -273,38 +280,26 @@
 
             if(bk === 0) {
                 document.getElementById('saranQb').innerText = "Isi BK";
-                document.getElementById('saranQb').className = "font-bold text-orange-400 text-lg";
                 return;
             }
-
             if(time <= 0) return;
 
-            // LOGIKA BARU: BASELINE 200
-            let targetQb = 200; // Default Start
+            let targetQb = 200; // Base Start
 
-            // Jika Akses CIMINO, boleh naik sesuai Berat Badan
             if(akses === 'cimino') {
-                let calcQb = bk * 4; // Rumus Ideal
-                // Adaptasi Waktu: Jika waktu dipercepat (<4 jam), butuh Qb lebih tinggi
+                let calcQb = bk * 4; 
                 let timeFactor = 4.0 / time; 
                 targetQb = calcQb * timeFactor;
-                
-                // Pembulatan Satuan (Agar responsif)
                 targetQb = Math.round(targetQb);
-            } 
-            // Jika Akses CDL, Prioritaskan keamanan (Max 220)
-            else {
-                // CDL Start 200. Bisa naik dikit jika waktu mepet, tapi max 220.
+            } else {
                 targetQb = 200 * (4.0 / time);
                 if(targetQb > 220) targetQb = 220;
                 targetQb = Math.round(targetQb);
             }
 
-            // Safety Limits Akhir
-            if(targetQb < 150) targetQb = 150; // Minimal jalan
-            if(usia > 75 && targetQb > 230) targetQb = 230; // Lansia hati-hati
+            if(targetQb < 150) targetQb = 150;
+            if(usia > 75 && targetQb > 230) targetQb = 230;
 
-            // Visualisasi Warna
             const elQb = document.getElementById('saranQb');
             elQb.innerText = targetQb;
             
@@ -316,7 +311,6 @@
                 document.getElementById('aksesNote').innerText = (akses === 'cdl') ? "Standar CDL" : "Standar RS";
             }
 
-            // Update Speed Warning
             const realSpeed = (uf / time).toFixed(2);
             const note = document.getElementById('saranNote');
             
@@ -343,20 +337,11 @@
             document.getElementById('valUF').value = totalUF.toFixed(2);
 
             // Waktu Default
-            let usia = parseInt(document.getElementById('usia').value) || 50;
-            let gender = document.getElementById('gender').value;
             let finalJam = 4.0;
-            if(usia > 60 || gender === 'wanita') {
-                // Kalkulasi speed aman dulu
-                let maxUFR = (bKering * 10) / 1000; 
-                if(maxUFR > 0) finalJam = totalUF / maxUFR;
-                if(finalJam < 4.0) finalJam = 4.0;
-                if(finalJam > 5.0) finalJam = 5.0;
-            }
+            // Logic optional: auto adjust based on patient profile if needed
+            // Tapi disini kita set default 4.0 atau biarkan user edit
 
             document.getElementById('saranJam').value = finalJam.toFixed(1);
-
-            // Panggil Adaptive Qb
             updateQbAndSpeed();
         };
 
@@ -371,6 +356,7 @@
                 document.getElementById('intake').value = dataAda.intake;
                 document.getElementById('valUF').value = dataAda.uf;
                 document.getElementById('edemaLevel').value = dataAda.edema_level || 0;
+                document.getElementById('catatan').value = dataAda.catatan || ""; // Load Catatan
                 updateDeskripsiEdema();
 
                 if(dataAda.waktu_hd) document.getElementById('saranJam').value = dataAda.waktu_hd;
@@ -396,6 +382,7 @@
                 document.getElementById('beratSesudah').value = "";
                 document.getElementById('tensiPost').value = "";
                 document.getElementById('nadiPost').value = "";
+                document.getElementById('catatan').value = ""; // Reset Catatan
                 document.getElementById('saranQb').innerText = "200";
                 document.getElementById('saranNote').innerText = "Normal";
                 document.getElementById('btnText').innerText = "Simpan Baru";
@@ -419,13 +406,47 @@
                     historyCache.push(item);
 
                     let displayBBSesudah = item.bb_sesudah ? `<strong>${item.bb_sesudah}</strong>` : '-';
+                    
+                    // DISPLAY TENSI & NADI PRE
+                    let displayPre = `
+                        <div class="font-bold text-orange-600">${item.bb}</div>
+                        <div class="text-[9px] text-slate-500">
+                            <i class="fas fa-heartbeat"></i> ${item.tensi_pre || '-'}
+                            ${item.nadi_pre ? `(${item.nadi_pre})` : ''}
+                        </div>
+                    `;
+
+                    // DISPLAY TENSI & NADI POST
+                    let displayPost = `
+                        <div class="font-bold text-green-600">${displayBBSesudah}</div>
+                        <div class="text-[9px] text-slate-500">
+                            <i class="fas fa-heartbeat"></i> ${item.tensi_post || '-'}
+                            ${item.nadi_post ? `(${item.nadi_post})` : ''}
+                        </div>
+                    `;
+
+                    let edemaBadge = item.edema_level > 0 ? `<span class="text-[8px] bg-yellow-100 text-yellow-800 px-1 rounded">+${item.edema_level}</span>` : '';
+                    
+                    // Tampilkan Catatan jika ada
+                    let noteDisplay = '';
+                    if (item.catatan) {
+                        noteDisplay = `
+                        <div class="col-span-4 mt-1 p-1 bg-red-50 border-l-2 border-red-400 text-[9px] text-slate-600 italic">
+                            <i class="fas fa-info-circle text-red-400 mr-1"></i> ${item.catatan}
+                        </div>`;
+                    }
+
                     let row = `
                         <tr class="bg-white border-b hover:bg-slate-50 transition">
-                            <td class="px-2 py-3 text-xs text-slate-500">${item.date.split('-')[2]}/${item.date.split('-')[1]}</td>
-                            <td class="px-2 py-3 text-xs text-orange-600 font-medium">${item.bb}</td>
-                            <td class="px-2 py-3 text-xs text-green-600">${displayBBSesudah}</td>
-                            <td class="px-2 py-3 font-bold text-slate-800 text-right">${item.uf}L</td>
+                            <td class="px-2 py-3 text-xs text-slate-500 align-top">
+                                ${item.date.split('-')[2]}/${item.date.split('-')[1]}
+                                <br>${edemaBadge}
+                            </td>
+                            <td class="px-2 py-3 text-xs align-top">${displayPre}</td>
+                            <td class="px-2 py-3 text-xs align-top">${displayPost}</td>
+                            <td class="px-2 py-3 font-bold text-slate-800 text-right align-top">${item.uf}L</td>
                         </tr>
+                        ${item.catatan ? `<tr><td colspan="4" class="px-2 pb-2">${noteDisplay}</td></tr>` : ''}
                     `;
                     tbody.insertAdjacentHTML('beforeend', row);
                 });
@@ -465,6 +486,7 @@
                 bb_sesudah: document.getElementById('beratSesudah').value ? parseFloat(document.getElementById('beratSesudah').value) : null,
                 tensi_post: document.getElementById('tensiPost').value,
                 nadi_post: document.getElementById('nadiPost').value,
+                catatan: document.getElementById('catatan').value, // Simpan Catatan
                 timestamp: new Date()
             };
 
@@ -528,4 +550,3 @@
     </script>
 </body>
 </html>
-
