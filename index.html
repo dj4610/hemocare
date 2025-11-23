@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hemocare Digital Record</title>
+    <title>Hemocare by Inferno-X</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -11,7 +11,6 @@
 
     <style>
         body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; }
-        /* Menghilangkan spinner pada input number */
         input[type=number]::-webkit-inner-spin-button, 
         input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         input[type=number] { -moz-appearance: textfield; }
@@ -53,14 +52,18 @@
         <div class="flex-grow px-4 py-6 pb-24 overflow-y-auto">
 
             <div class="bg-white p-5 rounded-3xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.1)] mb-6 border border-slate-100">
+                
                 <div class="flex justify-between items-center border-b border-slate-100 pb-4 mb-5">
-                    <h2 class="text-lg font-black text-teal-800 flex items-center"><i class="fas fa-clipboard-list mr-2 text-teal-500"></i> Input Data</h2>
+                    <div>
+                        <h2 class="text-lg font-black text-teal-800 flex items-center"><i class="fas fa-clipboard-list mr-2 text-teal-500"></i> Input Data</h2>
+                        <span id="tglHariIni" class="text-[10px] font-bold text-slate-400 uppercase tracking-wide ml-7 block -mt-1">...</span>
+                    </div>
                     <input type="date" id="tanggal" class="bg-slate-50 border border-slate-200 text-slate-700 text-sm font-semibold rounded-xl focus:ring-teal-500 focus:border-teal-500 block p-2.5 outline-none" onchange="cekDataTanggalIni()">
                 </div>
                 
                 <form id="hdForm" onsubmit="simpanKeCloud(event)">
                     <input type="hidden" id="docId"> <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200/80 mb-5">
-                        <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-2 flex items-center"><i class="fas fa-sliders-h mr-1.5"></i> Parameter Pasien (Wajib)</label>
+                        <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-2 flex items-center"><i class="fas fa-sliders-h mr-1.5"></i> Parameter Pasien</label>
                         <div class="grid grid-cols-3 gap-3">
                             <div class="relative">
                                 <input type="number" id="usia" class="w-full bg-white border border-slate-300 rounded-xl p-2.5 pl-3 text-sm font-bold focus:border-teal-500 outline-none transition" placeholder="Usia" oninput="simpanProfilLokal(); hitungOtomatis()">
@@ -79,10 +82,9 @@
 
                     <div class="mb-5">
                         <h3 class="text-xs font-bold text-orange-600 uppercase mb-3 flex items-center"><span class="bg-orange-100 p-1 rounded-md mr-2"><i class="fas fa-hourglass-start"></i></span> Pre-HD (Awal)</h3>
-                        
                         <div class="flex space-x-4 mb-4">
                             <div class="w-1/2">
-                                <label class="text-[11px] font-bold text-slate-500 uppercase ml-1">Berat Kering (Kering)</label>
+                                <label class="text-[11px] font-bold text-slate-500 uppercase ml-1">Berat Kering (sebelumnya)</label>
                                 <div class="relative mt-1">
                                     <input type="number" step="0.01" id="beratKering" class="w-full bg-slate-100 border-2 border-slate-200 rounded-2xl p-3 text-center font-black text-slate-700 text-xl outline-none focus:border-teal-400 transition" required oninput="hitungOtomatis()">
                                     <span class="absolute right-3 top-4 text-xs font-bold text-slate-400">Kg</span>
@@ -96,7 +98,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="bg-orange-50/50 p-3 rounded-2xl border border-orange-100 flex space-x-3">
                             <div class="w-1/2 relative">
                                 <label class="text-[10px] font-bold text-orange-400 uppercase absolute -top-2 left-2 bg-white px-1">Tensi Awal</label>
@@ -113,7 +114,6 @@
 
                     <div class="mb-6 bg-slate-50 p-4 rounded-3xl border border-slate-200">
                          <h3 class="text-xs font-bold text-slate-600 uppercase mb-3 flex items-center"><span class="bg-slate-200 p-1 rounded-md mr-2"><i class="fas fa-calculator"></i></span> Target & Parameter</h3>
-                        
                         <div class="grid grid-cols-2 gap-3 mb-4">
                             <div>
                                 <label class="text-[10px] font-bold text-slate-500 uppercase ml-1">Status Edema</label>
@@ -129,7 +129,6 @@
                                  <input type="number" step="0.1" id="intake" class="w-full mt-1 bg-white border border-blue-300 rounded-xl p-2.5 text-sm font-bold text-blue-700 outline-none focus:ring-2 focus:ring-blue-200" placeholder="0.0" oninput="hitungOtomatis()">
                              </div>
                         </div>
-
                         <div class="flex space-x-3 items-stretch mb-4">
                              <div class="w-1/2 bg-teal-700 rounded-2xl p-3 text-center text-white shadow-lg flex flex-col justify-center">
                                 <p class="text-[10px] font-bold uppercase opacity-70 mb-1">UF Goal (Target)</p>
@@ -138,7 +137,6 @@
                                     <span class="text-lg font-bold ml-1 opacity-80 pb-1">L</span>
                                 </div>
                              </div>
-                             
                              <div class="w-1/2 flex flex-col space-y-2">
                                  <div class="bg-white rounded-2xl p-2 border border-slate-200 text-center relative">
                                      <p class="text-[9px] font-bold text-slate-400 uppercase">Durasi (Jam)</p>
@@ -162,7 +160,7 @@
                     <div class="mb-6 bg-green-50/60 p-4 rounded-3xl border border-green-200/60">
                         <h3 class="text-xs font-bold text-green-700 uppercase mb-3 flex justify-between items-center">
                             <span class="flex items-center"><span class="bg-green-100 p-1 rounded-md mr-2"><i class="fas fa-flag-checkered"></i></span> Post-HD (Akhir)</span>
-                            <span class="text-[9px] bg-white text-green-600 px-2 py-1 rounded-full font-bold shadow-sm border border-green-100">Diisi Setelah Selesai</span>
+                            <span class="text-[9px] bg-white text-green-600 px-2 py-1 rounded-full font-bold shadow-sm border border-green-100">Diisi Belakangan</span>
                         </h3>
                         <div class="flex space-x-4 mb-4">
                             <div class="w-1/2">
@@ -213,7 +211,7 @@
                     <table class="w-full text-sm text-left text-slate-500">
                         <thead class="text-[10px] text-slate-400 uppercase bg-slate-50 border-b">
                             <tr>
-                                <th class="px-3 py-3 font-bold rounded-tl-xl">Tgl</th>
+                                <th class="px-3 py-3 font-bold rounded-tl-xl">Tgl/Hari</th>
                                 <th class="px-2 py-3 font-bold text-orange-500">Pre (Awal)</th>
                                 <th class="px-2 py-3 font-bold text-green-600">Post (Akhir)</th>
                                 <th class="px-3 py-3 font-bold text-right rounded-tr-xl">UF</th>
@@ -231,8 +229,6 @@
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, updateDoc, doc, query, where, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // --- KONFIGURASI FIREBASE ---
-        // (PASTIKAN INI SESUAI DENGAN PROJECT ANDA)
         const firebaseConfig = {
             apiKey: "AIzaSyAvDP_wO_3GoP-dNIkYtJ9n7e69s_5EihQ",
             authDomain: "hemocare-8e0fa.firebaseapp.com",
@@ -249,35 +245,57 @@
         let currentUser = null;
         let historyCache = [];
 
-        // --- AUTHENTICATION ---
+        // --- HELPER: FORMAT HARI & TANGGAL ---
+        function formatTglLengkap(dateString) {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+            // Array hari & bulan manual untuk menghindari masalah locale browser tertentu
+            const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+            const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+            
+            const dayName = days[date.getDay()];
+            const dayNum = date.getDate();
+            const monthName = months[date.getMonth()];
+            const year = date.getFullYear();
+            
+            return `${dayName}, ${dayNum} ${monthName} ${year}`;
+        }
+
+        function formatTglSingkat(dateString) {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+            const days = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+            const dayName = days[date.getDay()];
+            const dayNum = date.getDate();
+            const monthNum = date.getMonth() + 1;
+            
+            return `<span class="font-bold text-teal-700">${dayName}</span><br><span class="text-[10px] opacity-70">${dayNum}/${monthNum}</span>`;
+        }
+
         window.loginGoogle = () => signInWithPopup(auth, provider).catch(e => alert("Login Gagal: " + e.message));
         window.logout = () => signOut(auth).then(() => location.reload());
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                // User Login
                 currentUser = user;
                 document.getElementById('loginPage').classList.add('hidden');
                 document.getElementById('mainApp').classList.remove('hidden');
                 document.getElementById('userName').innerText = user.displayName.split(" ")[0];
                 
-                // Set Tanggal Hari Ini
                 const today = new Date();
-                const offset = today.getTimezoneOffset() * 60000; // Offset dalam milidetik
+                const offset = today.getTimezoneOffset() * 60000;
                 const localISOTime = new Date(today.getTime() - offset).toISOString().slice(0, 10);
                 document.getElementById('tanggal').value = localISOTime;
 
-                loadProfilLokal(); // Load profil yang tersimpan di HP
-                loadDataCloud();   // Load data dari database
+                loadProfilLokal();
+                loadDataCloud();
             } else {
-                // User Logout
                 currentUser = null;
                 document.getElementById('loginPage').classList.remove('hidden');
                 document.getElementById('mainApp').classList.add('hidden');
             }
         });
 
-        // --- MANAJEMEN PROFIL LOKAL ---
         window.simpanProfilLokal = () => {
             localStorage.setItem('hemo_usia', document.getElementById('usia').value);
             localStorage.setItem('hemo_gender', document.getElementById('gender').value);
@@ -293,51 +311,42 @@
             if(a) document.getElementById('akses').value = a;
         };
 
-        // --- LOGIKA KALKULASI (The Brain) ---
-        
-        // 1. Adaptive Qb & Speed Warning (Dipanggil saat Waktu diedit)
         window.updateQbAndSpeed = () => {
             const bk = parseFloat(document.getElementById('beratKering').value) || 0;
             const time = parseFloat(document.getElementById('saranJam').value) || 4.0; 
             const uf = parseFloat(document.getElementById('valUF').value) || 0;
             const usia = parseInt(document.getElementById('usia').value) || 50;
             const akses = document.getElementById('akses').value;
-            const qbEl = document.getElementById('saranQb');
-            const noteEl = document.getElementById('aksesNote');
-            const speedNoteEl = document.getElementById('saranNote');
 
-            if(bk === 0) { qbEl.innerText = "Isi BK"; qbEl.classList.remove('text-red-500', 'text-orange-500'); qbEl.classList.add('text-slate-400', 'text-sm'); return; }
+            if(bk === 0) { document.getElementById('saranQb').innerText = "Isi BK"; return; }
             if(time <= 0) return;
 
-            // Rumus Qb Adaptif
-            let targetQb = 200; // Base Safety
+            let targetQb = 200; 
             if(akses === 'cimino') {
                 let idealQb = bk * 4;
-                targetQb = idealQb * (4.0 / time); // Adjust by time factor
+                targetQb = idealQb * (4.0 / time);
             } else {
-                 targetQb = 200 * (4.0 / time); // CDL base 200 adjusted
-                 if(targetQb > 220) targetQb = 220; // Hard limit CDL
+                 targetQb = 200 * (4.0 / time); 
+                 if(targetQb > 220) targetQb = 220; 
             }
-            
-            targetQb = Math.round(targetQb); // Bulatkan ke satuan
-            if(targetQb < 150) targetQb = 150; // Min limit
-            if(usia > 75 && targetQb > 230) targetQb = 230; // Elderly limit
+            targetQb = Math.round(targetQb); 
+            if(targetQb < 150) targetQb = 150; 
+            if(usia > 75 && targetQb > 230) targetQb = 230; 
 
-            // Update UI Qb
+            const qbEl = document.getElementById('saranQb');
+            const noteEl = document.getElementById('aksesNote');
             qbEl.innerText = targetQb;
             qbEl.classList.remove('text-slate-400', 'text-sm');
             if(targetQb > 250) {
                 qbEl.classList.add('text-orange-500'); qbEl.classList.remove('text-red-500');
                 noteEl.innerText = "High Eff.";
-                noteEl.classList.replace('bg-slate-100', 'bg-orange-100'); noteEl.classList.replace('text-slate-400', 'text-orange-600');
             } else {
                  qbEl.classList.add('text-red-500'); qbEl.classList.remove('text-orange-500');
                  noteEl.innerText = (akses === 'cdl') ? "Std CDL" : "Std RS";
-                 noteEl.classList.replace('bg-orange-100', 'bg-slate-100'); noteEl.classList.replace('text-orange-600', 'text-slate-400');
             }
 
-            // Update Speed Warning (UFR)
             const realSpeed = (uf / time).toFixed(2);
+            const speedNoteEl = document.getElementById('saranNote');
             if(realSpeed > 0.85) {
                 speedNoteEl.innerHTML = `<i class="fas fa-exclamation-triangle mr-1"></i>${realSpeed} L/j (Cepat)`;
                 speedNoteEl.className = "text-[9px] font-bold text-red-500 animate-pulse";
@@ -347,7 +356,6 @@
             }
         }
 
-        // 2. Hitung Otomatis Utama (Dipanggil input lain)
         window.hitungOtomatis = () => {
             let bKering = parseFloat(document.getElementById('beratKering').value) || 0;
             let bBasah = parseFloat(document.getElementById('beratBasah').value) || 0;
@@ -357,44 +365,37 @@
             let usia = parseInt(document.getElementById('usia').value) || 50;
             let gender = document.getElementById('gender').value;
 
-            // Hitung UF Goal
             let idwg = bBasah - bKering;
             if(idwg < 0) idwg = 0;
             let totalUF = idwg + intakeVal + edemaVal;
             document.getElementById('valUF').value = totalUF.toFixed(2);
 
-            // Saran Waktu Awal (Hanya saran, user bisa edit)
             let finalJam = 4.0;
-            // Jika lansia/wanita & UF besar, sarankan waktu lebih lama
             if(totalUF > 3.0 && (usia > 60 || gender === 'wanita')) {
-                 let safetyFactor = (usia > 70) ? 10 : 12;
-                 let maxUFR = (bKering * safetyFactor) / 1000; 
+                 let maxUFR = (bKering * 12) / 1000; 
                  if(maxUFR > 0) finalJam = totalUF / maxUFR;
                  if(finalJam < 4.0) finalJam = 4.0;
                  if(finalJam > 5.0) finalJam = 5.0;
             }
-            // Set nilai hanya jika user belum mengubahnya secara manual (logika sederhana: jika masih default 4.0 atau 5.0)
             let currentTime = parseFloat(document.getElementById('saranJam').value);
             if(currentTime === 4.0 || currentTime === 5.0 || isNaN(currentTime)) {
                  document.getElementById('saranJam').value = finalJam.toFixed(1);
             }
-
-            // Panggil perhitungan Qb adaptif
             updateQbAndSpeed();
         };
 
-
-        // --- MANAJEMEN DATA (Cloud & Tanggal) ---
-
-        // Cek apakah tanggal yang dipilih sudah ada datanya
+        // --- UPDATE TANGGAL HARI INI (ATAS) ---
         window.cekDataTanggalIni = () => {
             const tglPilihan = document.getElementById('tanggal').value;
+            
+            // Update Teks Hari di Atas
+            document.getElementById('tglHariIni').innerText = formatTglLengkap(tglPilihan);
+
             const dataAda = historyCache.find(item => item.date === tglPilihan);
             const btnSimpan = document.getElementById('btnSimpan');
             const btnText = document.getElementById('btnText');
 
             if(dataAda) {
-                // MODE UPDATE: Isi form dengan data yang ada
                 document.getElementById('docId').value = dataAda.id;
                 document.getElementById('beratKering').value = dataAda.bk;
                 document.getElementById('beratBasah').value = dataAda.bb;
@@ -402,25 +403,19 @@
                 document.getElementById('valUF').value = dataAda.uf;
                 document.getElementById('edemaLevel').value = dataAda.edema_level || 0;
                 document.getElementById('catatan').value = dataAda.catatan || "";
-                
                 if(dataAda.waktu_hd) document.getElementById('saranJam').value = dataAda.waktu_hd;
-                
                 document.getElementById('tensiPre').value = dataAda.tensi_pre || "";
                 document.getElementById('nadiPre').value = dataAda.nadi_pre || "";
                 document.getElementById('beratSesudah').value = dataAda.bb_sesudah || "";
                 document.getElementById('tensiPost').value = dataAda.tensi_post || "";
                 document.getElementById('nadiPost').value = dataAda.nadi_post || "";
 
-                // Ubah Tampilan Tombol
                 btnText.innerText = "Update Data Tanggal Ini";
                 btnSimpan.classList.replace('bg-teal-600', 'bg-blue-600');
                 btnSimpan.classList.replace('shadow-teal-200', 'shadow-blue-200');
                 btnSimpan.querySelector('.fa-save').classList.replace('fa-save', 'fa-sync-alt');
-
             } else {
-                // MODE BARU: Reset form
                 document.getElementById('docId').value = "";
-                // Keep Berat Kering if available from history
                 if(historyCache.length > 0) {
                      document.getElementById('beratKering').value = historyCache[0].bk;
                 } else {
@@ -432,32 +427,27 @@
                 document.getElementById('edemaLevel').value = 0;
                 document.getElementById('catatan').value = "";
                 document.getElementById('saranJam').value = "4.0";
-                
                 document.getElementById('tensiPre').value = "";
                 document.getElementById('nadiPre').value = "";
                 document.getElementById('beratSesudah').value = "";
                 document.getElementById('tensiPost').value = "";
                 document.getElementById('nadiPost').value = "";
 
-                // Reset Tombol
                 btnText.innerText = "Simpan Data Baru";
                 btnSimpan.classList.replace('bg-blue-600', 'bg-teal-600');
                 btnSimpan.classList.replace('shadow-blue-200', 'shadow-teal-200');
                 btnSimpan.querySelector('.fa-sync-alt')?.classList.replace('fa-sync-alt', 'fa-save');
             }
-             // Hitung ulang untuk refresh tampilan Qb/Speed
             hitungOtomatis();
         }
 
-        // Load Data dari Firebase
         async function loadDataCloud() {
             if(!currentUser) return;
-            // Query dengan sorting tanggal descending (terbaru diatas)
             const q = query(collection(db, "riwayat_hd"), where("uid", "==", currentUser.uid), orderBy("date", "desc"));
 
             try {
                 const querySnapshot = await getDocs(q);
-                historyCache = []; // Reset cache
+                historyCache = [];
                 const tbody = document.getElementById('historyTableBody');
                 tbody.innerHTML = '';
 
@@ -466,13 +456,12 @@
                     item.id = docSnap.id;
                     historyCache.push(item);
 
-                    // Format Tampilan Tabel
                     let displayBBSesudah = item.bb_sesudah ? `<strong class="text-sm">${item.bb_sesudah}</strong>` : '<span class="text-slate-300">-</span>';
                     let edemaBadge = item.edema_level > 0 ? `<span class="text-[9px] bg-yellow-100 text-yellow-800 px-1.5 py-0.5 rounded-full font-bold ml-1">+${item.edema_level}</span>` : '';
-                    let dateParts = item.date.split('-');
-                    let formattedDate = `${dateParts[2]}/${dateParts[1]}<br><span class="text-[10px] opacity-70">${dateParts[0].substring(2)}</span>`;
+                    
+                    // UPDATE: GUNAKAN FORMAT HARI SINGKAT
+                    let formattedDate = formatTglSingkat(item.date);
 
-                    // Tampilan Pre (Bertumpuk)
                     let displayPre = `
                         <div class="font-black text-sm text-orange-600">${item.bb}</div>
                         <div class="text-[10px] text-slate-500 mt-0.5 flex items-center">
@@ -481,7 +470,6 @@
                         ${item.nadi_pre ? `<div class="text-[10px] text-slate-400 ml-4">${item.nadi_pre} bpm</div>` : ''}
                     `;
 
-                    // Tampilan Post (Bertumpuk)
                     let displayPost = `
                         <div class="font-black text-sm text-green-600">${displayBBSesudah}</div>
                         <div class="text-[10px] text-slate-500 mt-0.5 flex items-center">
@@ -490,7 +478,6 @@
                         ${item.nadi_post ? `<div class="text-[10px] text-slate-400 ml-4">${item.nadi_post} bpm</div>` : ''}
                     `;
                     
-                    // Tampilan Catatan (Highlight Kuning)
                     let noteDisplay = '';
                     if (item.catatan) {
                         noteDisplay = `
@@ -504,7 +491,6 @@
                         </tr>`;
                     }
 
-                    // Row Utama
                     let row = `
                         <tr class="bg-white hover:bg-slate-50 transition border-b border-slate-100">
                             <td class="px-3 py-3 text-xs text-slate-600 leading-tight">
@@ -515,25 +501,22 @@
                             <td class="px-2 py-3 align-top bg-green-50/30">${displayPost}</td>
                             <td class="px-3 py-3 font-black text-slate-700 text-right text-base align-top">${item.uf}<span class="text-xs font-bold text-slate-400 ml-0.5">L</span></td>
                         </tr>
-                        ${noteDisplay} `;
+                        ${noteDisplay}
+                    `;
                     tbody.insertAdjacentHTML('beforeend', row);
                 });
                 
-                // Sinkronisasi form dengan data yang baru diload
                 cekDataTanggalIni();
-                // Update grafik (data dibalik agar kronologis dari kiri ke kanan)
                 updateChartCloud([...historyCache].reverse());
 
             } catch (error) {
                 console.error("Error Load Data:", error);
-                // Alert jika index belum dibuat di Firebase Console
                 if(error.message.includes("index")) {
-                     alert("PENTING: Database memerlukan 'Index'. Silahkan buka Console Browser (F12) untuk melihat link pembuatan index di Firebase.");
+                     alert("PENTING: Database memerlukan 'Index'. Silahkan cek console browser.");
                 }
             }
         }
 
-        // Simpan Data ke Firebase
         window.simpanKeCloud = async (e) => {
             e.preventDefault();
             if(!currentUser) return alert("Silahkan login ulang.");
@@ -543,13 +526,11 @@
             const originalText = btnText.innerText;
             const originalIcon = btn.querySelector('i').className;
             
-            // Ubah status tombol saat proses
             btnText.innerText = "Menyimpan...";
             btn.querySelector('i').className = "fas fa-spinner fa-spin ml-3";
             btn.disabled = true;
             btn.classList.add('opacity-70', 'cursor-not-allowed');
 
-            // Siapkan data
             const dataPayload = {
                 uid: currentUser.uid,
                 date: document.getElementById('tanggal').value,
@@ -561,33 +542,28 @@
                 edema_level: parseFloat(document.getElementById('edemaLevel').value) || 0,
                 uf: document.getElementById('valUF').value, 
                 waktu_hd: document.getElementById('saranJam').value, 
-                // Data Post bisa null jika belum diisi
                 bb_sesudah: document.getElementById('beratSesudah').value ? parseFloat(document.getElementById('beratSesudah').value) : null,
                 tensi_post: document.getElementById('tensiPost').value,
                 nadi_post: document.getElementById('nadiPost').value,
                 catatan: document.getElementById('catatan').value,
-                timestamp: new Date() // Untuk keperluan internal DB
+                timestamp: new Date()
             };
 
             const docId = document.getElementById('docId').value;
 
             try {
                 if (docId) {
-                    // Mode Update
                     await updateDoc(doc(db, "riwayat_hd", docId), dataPayload);
-                    showNotification("Data berhasil diperbarui!", "success");
+                    alert("Data berhasil diperbarui!");
                 } else {
-                    // Mode Simpan Baru
                     await addDoc(collection(db, "riwayat_hd"), dataPayload);
-                    showNotification("Data baru berhasil disimpan!", "success");
+                    alert("Data baru berhasil disimpan!");
                 }
-                // Reload data untuk refresh tabel dan grafik
                 await loadDataCloud();
             } catch (error) {
                 console.error(error);
-                showNotification("Gagal menyimpan: " + error.message, "error");
+                alert("Gagal menyimpan: " + error.message);
             } finally {
-                // Kembalikan status tombol
                 btnText.innerText = originalText;
                 btn.querySelector('i').className = originalIcon;
                 btn.disabled = false;
@@ -595,20 +571,10 @@
             }
         };
 
-        // Notifikasi Sederhana (Pengganti Alert)
-        function showNotification(message, type) {
-            // Bisa dikembangkan menjadi toast notification yang lebih cantik
-            alert(message); 
-        }
-
-
-        // --- VISUALISASI (CHART.JS) ---
         let myChart = null;
         function updateChartCloud(data) {
             const ctx = document.getElementById('hdChart').getContext('2d');
             if (myChart) myChart.destroy();
-            
-            // Ambil 7 data terakhir untuk grafik
             const recentData = data.slice(-7);
 
             myChart = new Chart(ctx, {
@@ -616,13 +582,13 @@
                 data: {
                     labels: recentData.map(d => {
                          let parts = d.date.split('-');
-                         return `${parts[2]}/${parts[1]}`; // Format DD/MM
+                         return `${parts[2]}/${parts[1]}`; 
                     }),
                     datasets: [
                         {
-                            label: 'Berat Kering (Target)',
+                            label: 'Berat Kering',
                             data: recentData.map(d => d.bk),
-                            borderColor: '#0d9488', // Teal
+                            borderColor: '#0d9488',
                             backgroundColor: 'rgba(13, 148, 136, 0.05)',
                             borderWidth: 2,
                             pointRadius: 3,
@@ -631,9 +597,9 @@
                             tension: 0.3
                         },
                         {
-                            label: 'Berat Datang (Aktual)',
+                            label: 'Berat Datang',
                             data: recentData.map(d => d.bb),
-                            borderColor: '#f97316', // Orange
+                            borderColor: '#f97316',
                             borderDash: [5, 5],
                             borderWidth: 2,
                             pointRadius: 4,
@@ -645,35 +611,12 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    interaction: {
-                        mode: 'index',
-                        intersect: false,
-                    },
                     plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: { boxWidth: 12, font: { size: 11 } }
-                        },
-                        tooltip: {
-                             backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                             titleColor: '#1e293b',
-                             bodyColor: '#475569',
-                             borderColor: '#e2e8f0',
-                             borderWidth: 1,
-                             padding: 10,
-                             displayColors: true
-                        }
+                        legend: { position: 'bottom' }
                     },
                     scales: {
-                        y: {
-                            beginAtZero: false, // Agar grafik fokus pada range berat badan
-                            grid: { color: '#f1f5f9' },
-                            ticks: { font: { size: 10 }, color: '#94a3b8' }
-                        },
-                        x: {
-                            grid: { display: false },
-                            ticks: { font: { size: 10 }, color: '#94a3b8' }
-                        }
+                        y: { beginAtZero: false, grid: { color: '#f1f5f9' } },
+                        x: { grid: { display: false } }
                     }
                 }
             });
