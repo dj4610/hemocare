@@ -3,200 +3,223 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hemocare by Inferno-X</title>
+    <title>Hemocare Digital Record</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #f0f9ff; }
+        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; }
+        /* Menghilangkan spinner pada input number */
         input[type=number]::-webkit-inner-spin-button, 
         input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
         .loader { border-top-color: #0d9488; -webkit-animation: spinner 1.5s linear infinite; animation: spinner 1.5s linear infinite; }
         @keyframes spinner { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="text-slate-700 select-none">
+<body class="text-slate-700 select-none bg-slate-50">
 
-    <div id="loginPage" class="h-screen flex flex-col justify-center items-center p-6 bg-gradient-to-b from-teal-600 to-teal-800 hidden">
-        <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-sm text-center">
-            <div class="bg-teal-50 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-4 shadow-inner border-4 border-white">
-                <svg class="w-14 h-14 text-teal-600" fill="currentColor" viewBox="0 0 512 512">
+    <div id="loginPage" class="min-h-screen flex flex-col justify-center items-center p-6 bg-gradient-to-br from-teal-600 to-teal-800 hidden">
+        <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-sm text-center backdrop-blur-sm bg-white/95">
+            <div class="bg-teal-50 w-28 h-28 rounded-full flex items-center justify-center mx-auto mb-5 shadow-inner border-4 border-white p-4">
+                <svg class="w-full h-full text-teal-600 drop-shadow-sm" fill="currentColor" viewBox="0 0 512 512">
                     <path d="M160 96c-55.2 0-102.8 32.4-126.3 80.6C9.9 225.1 0 267.7 0 304c0 88.4 71.6 160 160 160c66 0 122.8-40.1 147.3-97.8c-14.5-21.6-23.3-47.6-23.3-75.7c0-10.7 1.3-21.1 3.7-31c-13.6-6.1-28.6-9.5-44.4-9.5H240c-22.1 0-40-17.9-40-40V176c0-16.2 9.2-30.2 22.8-37.2c-18.6-27-49.3-42.8-82.8-42.8zM352 32c-66 0-122.8 40.1-147.3 97.8c14.5 21.6 23.3 47.6 23.3 75.7c0 10.7-1.3 21.1-3.7 31c13.6 6.1 28.6 9.5 44.4 9.5h3.3c22.1 0 40 17.9 40 40v34c0 16.2-9.2 30.2-22.8 37.2c18.6 27 49.3 42.8 82.8 42.8c55.2 0 102.8-32.4 126.3-80.6C502.1 286.9 512 244.3 512 208c0-88.4-71.6-160-160-160z"/>
                 </svg>
             </div>
-            <h1 class="text-3xl font-black text-slate-800 tracking-tight">Hemocare</h1>
-            <p class="text-xs font-bold text-teal-600 uppercase tracking-[0.3em] mb-6 border-b border-teal-100 pb-4 mx-10">by Inferno-X</p>
-            <button onclick="loginGoogle()" class="w-full bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold py-4 px-4 rounded-xl shadow-md flex items-center justify-center transition group">
-                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-6 h-6 mr-3">
+            <h1 class="text-4xl font-black text-slate-800 tracking-tight mb-1">Hemocare</h1>
+            <p class="text-sm font-bold text-teal-600 uppercase tracking-widest mb-8">Jurnal Pasien Dialisis</p>
+            <button onclick="loginGoogle()" class="w-full bg-white border-2 border-slate-200 hover:border-teal-500 hover:bg-teal-50 text-slate-700 font-bold py-4 px-4 rounded-2xl shadow-sm flex items-center justify-center transition-all duration-300 group">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-6 h-6 mr-3 group-hover:scale-110 transition">
                 Masuk dengan Google
             </button>
         </div>
+        <p class="text-teal-100/60 text-xs mt-8">©2025 Inferno-X</p>
     </div>
 
-    <div id="mainApp" class="hidden min-h-screen flex flex-col">
+    <div id="mainApp" class="hidden min-h-screen flex flex-col max-w-md mx-auto bg-white shadow-xl">
         
-        <div class="bg-teal-600 text-white p-6 rounded-b-3xl shadow-lg mb-6 sticky top-0 z-50">
-            <div class="flex justify-between items-center max-w-md mx-auto">
-                <div>
-                    <h1 class="text-xl font-bold flex items-center"><i class="fas fa-user-circle mr-2"></i> <span id="userName">User</span></h1>
-                    <div class="flex items-center mt-1 ml-6">
-                        <span class="text-[10px] bg-teal-700 px-2 py-0.5 rounded text-teal-100 tracking-wider border border-teal-500">by Inferno-X</span>
-                    </div>
-                </div>
-                <button onclick="logout()" class="bg-white/20 hover:bg-white/30 backdrop-blur-sm p-2 rounded-full text-xs px-4 transition border border-white/20">
-                    Keluar <i class="fas fa-sign-out-alt ml-1"></i>
-                </button>
+        <div class="bg-teal-600 text-white p-5 rounded-b-3xl shadow-md sticky top-0 z-50 flex justify-between items-center">
+            <div>
+                <h1 class="text-lg font-bold flex items-center"><i class="fas fa-user-circle text-teal-200 mr-2 text-xl"></i> Hai, <span id="userName" class="ml-1">User</span></h1>
+                <p class="text-xs text-teal-100 ml-8 opacity-80">Pasien Hemodialisis</p>
             </div>
+            <button onclick="logout()" class="bg-teal-700/50 hover:bg-teal-700 text-xs py-2 px-4 rounded-full transition flex items-center backdrop-blur-sm border border-teal-500/30">
+                Keluar <i class="fas fa-sign-out-alt ml-2"></i>
+            </button>
         </div>
 
-        <div class="flex-grow max-w-md mx-auto px-4 pb-20 w-full">
+        <div class="flex-grow px-4 py-6 pb-24 overflow-y-auto">
 
-            <div class="bg-white p-5 rounded-2xl shadow-md mb-6 border border-slate-100">
-                <div class="flex justify-between items-center border-b pb-3 mb-4">
-                    <h2 class="text-lg font-bold text-teal-700">Input Data Medis</h2>
-                    <input type="date" id="tanggal" class="bg-slate-50 border border-slate-300 text-slate-900 text-xs rounded-lg focus:ring-teal-500 focus:border-teal-500 block p-2" onchange="cekDataTanggalIni()">
+            <div class="bg-white p-5 rounded-3xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.1)] mb-6 border border-slate-100">
+                <div class="flex justify-between items-center border-b border-slate-100 pb-4 mb-5">
+                    <h2 class="text-lg font-black text-teal-800 flex items-center"><i class="fas fa-clipboard-list mr-2 text-teal-500"></i> Input Data</h2>
+                    <input type="date" id="tanggal" class="bg-slate-50 border border-slate-200 text-slate-700 text-sm font-semibold rounded-xl focus:ring-teal-500 focus:border-teal-500 block p-2.5 outline-none" onchange="cekDataTanggalIni()">
                 </div>
                 
                 <form id="hdForm" onsubmit="simpanKeCloud(event)">
-                    <input type="hidden" id="docId">
-
-                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 mb-4">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2">Profil & Akses</label>
-                        <div class="grid grid-cols-3 gap-2">
-                            <input type="number" id="usia" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs font-semibold focus:border-teal-500 outline-none" placeholder="Usia" oninput="simpanProfilLokal(); hitungOtomatis()">
-                            <select id="gender" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs font-semibold focus:border-teal-500 outline-none" onchange="simpanProfilLokal(); hitungOtomatis()">
+                    <input type="hidden" id="docId"> <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200/80 mb-5">
+                        <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-2 flex items-center"><i class="fas fa-sliders-h mr-1.5"></i> Parameter Pasien (Wajib)</label>
+                        <div class="grid grid-cols-3 gap-3">
+                            <div class="relative">
+                                <input type="number" id="usia" class="w-full bg-white border border-slate-300 rounded-xl p-2.5 pl-3 text-sm font-bold focus:border-teal-500 outline-none transition" placeholder="Usia" oninput="simpanProfilLokal(); hitungOtomatis()">
+                                <span class="absolute right-3 top-2.5 text-xs text-slate-400 font-semibold">Thn</span>
+                            </div>
+                            <select id="gender" class="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-sm font-bold focus:border-teal-500 outline-none transition" onchange="simpanProfilLokal(); hitungOtomatis()">
                                 <option value="pria">Pria</option>
                                 <option value="wanita">Wanita</option>
                             </select>
-                            <select id="akses" class="w-full bg-teal-50 border border-teal-300 text-teal-800 rounded-lg p-2 text-xs font-bold focus:border-teal-500 outline-none" onchange="simpanProfilLokal(); hitungOtomatis()">
+                            <select id="akses" class="w-full bg-white border border-teal-300 text-teal-800 rounded-xl p-2.5 text-sm font-bold focus:border-teal-500 outline-none transition" onchange="simpanProfilLokal(); hitungOtomatis()">
                                 <option value="cimino">Cimino</option>
                                 <option value="cdl">CDL/Paha</option>
                             </select>
                         </div>
                     </div>
 
-                    <div class="flex space-x-3 mb-4">
-                        <div class="w-1/2">
-                            <label class="text-[10px] font-bold text-slate-400 uppercase">Berat Kering Sebelumnya</label>
-                            <input type="number" step="0.01" id="beratKering" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 font-bold text-teal-700 text-lg mt-1" required oninput="hitungOtomatis()">
+                    <div class="mb-5">
+                        <h3 class="text-xs font-bold text-orange-600 uppercase mb-3 flex items-center"><span class="bg-orange-100 p-1 rounded-md mr-2"><i class="fas fa-hourglass-start"></i></span> Pre-HD (Awal)</h3>
+                        
+                        <div class="flex space-x-4 mb-4">
+                            <div class="w-1/2">
+                                <label class="text-[11px] font-bold text-slate-500 uppercase ml-1">Berat Kering (Kering)</label>
+                                <div class="relative mt-1">
+                                    <input type="number" step="0.01" id="beratKering" class="w-full bg-slate-100 border-2 border-slate-200 rounded-2xl p-3 text-center font-black text-slate-700 text-xl outline-none focus:border-teal-400 transition" required oninput="hitungOtomatis()">
+                                    <span class="absolute right-3 top-4 text-xs font-bold text-slate-400">Kg</span>
+                                </div>
+                            </div>
+                            <div class="w-1/2">
+                                <label class="text-[11px] font-bold text-slate-500 uppercase ml-1">Berat Basah Datang</label>
+                                <div class="relative mt-1">
+                                    <input type="number" step="0.01" id="beratBasah" class="w-full bg-white border-2 border-orange-400 rounded-2xl p-3 text-center font-black text-orange-600 text-xl outline-none focus:ring-2 focus:ring-orange-200 transition" required oninput="hitungOtomatis()">
+                                    <span class="absolute right-3 top-4 text-xs font-bold text-orange-300">Kg</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="w-1/2">
-                            <label class="text-[10px] font-bold text-slate-400 uppercase">Berat Datang</label>
-                            <input type="number" step="0.01" id="beratBasah" class="w-full bg-white border-2 border-orange-200 rounded-xl p-2 font-bold text-orange-600 text-lg mt-1" required oninput="hitungOtomatis()">
+
+                        <div class="bg-orange-50/50 p-3 rounded-2xl border border-orange-100 flex space-x-3">
+                            <div class="w-1/2 relative">
+                                <label class="text-[10px] font-bold text-orange-400 uppercase absolute -top-2 left-2 bg-white px-1">Tensi Awal</label>
+                                <input type="text" id="tensiPre" class="w-full bg-white border border-orange-200 rounded-xl p-2.5 pl-8 text-sm font-bold text-slate-700" placeholder="120/80">
+                                <i class="fas fa-heartbeat absolute left-3 top-3 text-orange-300"></i>
+                            </div>
+                            <div class="w-1/2 relative">
+                                <label class="text-[10px] font-bold text-orange-400 uppercase absolute -top-2 left-2 bg-white px-1">Nadi Awal</label>
+                                <input type="number" id="nadiPre" class="w-full bg-white border border-orange-200 rounded-xl p-2.5 pl-8 text-sm font-bold text-slate-700" placeholder="80">
+                                <i class="fas fa-wave-square absolute left-3 top-3 text-orange-300"></i>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="bg-blue-50/50 p-3 rounded-xl border border-blue-100 mb-4">
-                        <h3 class="text-xs font-bold text-slate-500 uppercase mb-2 flex items-center">
-                            <i class="fas fa-heartbeat mr-1.5 text-red-400"></i> Tensi & Nadi Awal
-                        </h3>
-                        <div class="flex space-x-3">
-                            <div class="w-1/2 relative">
-                                <input type="text" id="tensiPre" class="w-full bg-white border border-blue-200 rounded-lg p-2 text-sm font-bold text-slate-700 text-center" placeholder="120/80">
-                                <span class="absolute right-2 top-2 text-[9px] text-slate-400">mmHg</span>
+                    <div class="mb-6 bg-slate-50 p-4 rounded-3xl border border-slate-200">
+                         <h3 class="text-xs font-bold text-slate-600 uppercase mb-3 flex items-center"><span class="bg-slate-200 p-1 rounded-md mr-2"><i class="fas fa-calculator"></i></span> Target & Parameter</h3>
+                        
+                        <div class="grid grid-cols-2 gap-3 mb-4">
+                            <div>
+                                <label class="text-[10px] font-bold text-slate-500 uppercase ml-1">Status Edema</label>
+                                <select id="edemaLevel" class="w-full mt-1 bg-white border border-yellow-400 text-yellow-800 text-sm rounded-xl p-2.5 font-bold outline-none focus:ring-2 focus:ring-yellow-200" onchange="hitungOtomatis()">
+                                    <option value="0">Normal</option>
+                                    <option value="0.25">Ringan (+0.25)</option>
+                                    <option value="0.5">Sedang (+0.5)</option>
+                                    <option value="1">Berat (+1.0)</option>
+                                </select>
                             </div>
-                            <div class="w-1/2 relative">
-                                <input type="number" id="nadiPre" class="w-full bg-white border border-blue-200 rounded-lg p-2 text-sm font-bold text-slate-700 text-center" placeholder="80">
-                                <span class="absolute right-2 top-2 text-[9px] text-slate-400">bpm</span>
+                             <div>
+                                 <label class="text-[10px] font-bold text-slate-500 uppercase ml-1">Intake (Minum L)</label>
+                                 <input type="number" step="0.1" id="intake" class="w-full mt-1 bg-white border border-blue-300 rounded-xl p-2.5 text-sm font-bold text-blue-700 outline-none focus:ring-2 focus:ring-blue-200" placeholder="0.0" oninput="hitungOtomatis()">
+                             </div>
+                        </div>
+
+                        <div class="flex space-x-3 items-stretch mb-4">
+                             <div class="w-1/2 bg-teal-700 rounded-2xl p-3 text-center text-white shadow-lg flex flex-col justify-center">
+                                <p class="text-[10px] font-bold uppercase opacity-70 mb-1">UF Goal (Target)</p>
+                                <div class="flex items-end justify-center">
+                                    <input type="number" step="0.01" id="valUF" class="bg-transparent border-b-2 border-teal-400 w-24 text-center font-black text-3xl outline-none px-1" value="0.00">
+                                    <span class="text-lg font-bold ml-1 opacity-80 pb-1">L</span>
+                                </div>
+                             </div>
+                             
+                             <div class="w-1/2 flex flex-col space-y-2">
+                                 <div class="bg-white rounded-2xl p-2 border border-slate-200 text-center relative">
+                                     <p class="text-[9px] font-bold text-slate-400 uppercase">Durasi (Jam)</p>
+                                     <input type="number" step="0.1" id="saranJam" class="w-full text-center font-black text-2xl text-slate-700 border-b-2 border-teal-500 focus:border-teal-300 outline-none" value="4.0" oninput="updateQbAndSpeed()">
+                                     <i class="fas fa-clock absolute right-2 top-2 text-slate-200"></i>
+                                 </div>
+                                 <div class="bg-white rounded-2xl p-2 border border-slate-200 text-center flex items-center justify-between px-3">
+                                    <div>
+                                        <p class="text-[9px] font-bold text-slate-400 uppercase text-left">Qb (Pompa)</p>
+                                        <p class="font-black text-xl text-red-500 leading-none mt-0.5"><span id="saranQb">200</span></p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p id="aksesNote" class="text-[8px] font-bold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded-full inline-block mb-1">Std RS</p>
+                                        <p id="saranNote" class="text-[9px] font-bold text-teal-600">Aman</p>
+                                    </div>
+                                 </div>
+                             </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-6 bg-green-50/60 p-4 rounded-3xl border border-green-200/60">
+                        <h3 class="text-xs font-bold text-green-700 uppercase mb-3 flex justify-between items-center">
+                            <span class="flex items-center"><span class="bg-green-100 p-1 rounded-md mr-2"><i class="fas fa-flag-checkered"></i></span> Post-HD (Akhir)</span>
+                            <span class="text-[9px] bg-white text-green-600 px-2 py-1 rounded-full font-bold shadow-sm border border-green-100">Diisi Setelah Selesai</span>
+                        </h3>
+                        <div class="flex space-x-4 mb-4">
+                            <div class="w-1/2">
+                                <label class="text-[11px] font-bold text-green-600 uppercase ml-1">BB Pulang</label>
+                                <div class="relative mt-1">
+                                    <input type="number" step="0.01" id="beratSesudah" class="w-full bg-white border-2 border-green-400 rounded-2xl p-3 text-center font-black text-green-700 text-xl outline-none focus:ring-2 focus:ring-green-200 transition">
+                                    <span class="absolute right-3 top-4 text-xs font-bold text-green-300">Kg</span>
+                                </div>
+                            </div>
+                            <div class="w-1/2 flex flex-col justify-end space-y-2">
+                                <div class="relative">
+                                    <input type="text" id="tensiPost" class="w-full bg-white border border-green-300 rounded-xl p-2 pl-8 text-xs font-bold text-green-700 placeholder-green-300/50" placeholder="Tensi Pulang">
+                                    <i class="fas fa-heartbeat absolute left-2.5 top-2.5 text-green-300"></i>
+                                </div>
+                                <div class="relative">
+                                    <input type="number" id="nadiPost" class="w-full bg-white border border-green-300 rounded-xl p-2 pl-8 text-xs font-bold text-green-700 placeholder-green-300/50" placeholder="Nadi Pulang">
+                                    <i class="fas fa-wave-square absolute left-2.5 top-2.5 text-green-300"></i>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="mb-6">
-                        <div class="bg-yellow-50 p-3 rounded-xl border border-yellow-200 mb-3">
-                            <label class="text-xs font-bold text-yellow-800 block mb-1">Status Edema</label>
-                            <select id="edemaLevel" class="w-full bg-white border border-yellow-300 text-yellow-900 text-sm rounded-lg p-2 font-semibold mb-2" onchange="updateDeskripsiEdema(); hitungOtomatis()">
-                                <option value="0">Normal (Tidak Ada)</option>
-                                <option value="0.25">Ringan (+0.25 L)</option>
-                                <option value="0.5">Sedang (+0.50 L)</option>
-                                <option value="1">Berat (+1.00 L)</option>
-                            </select>
-                            <p id="edemaDesc" class="text-[10px] text-yellow-700 italic bg-yellow-100 p-2 rounded border border-yellow-200">
-                                Kondisi normal, tidak ada penumpukan cairan.
-                            </p>
-                        </div>
-
-                        <div class="flex space-x-3 items-end mb-2">
-                             <div class="w-1/2">
-                                 <label class="text-[10px] font-bold text-slate-400 uppercase">Makan/Minum (L)</label>
-                                 <input type="number" step="0.01" id="intake" class="w-full bg-white border border-blue-200 rounded-lg p-2 text-sm font-semibold text-blue-800" placeholder="0" oninput="hitungOtomatis()">
-                             </div>
-                             <div class="w-1/2">
-                                <label class="text-[10px] font-bold text-teal-600 uppercase">UF GOAL (L)</label>
-                                <input type="number" step="0.01" id="valUF" class="w-full bg-slate-800 border-2 border-teal-500 rounded-xl p-2 font-bold text-teal-400 text-2xl text-center" value="0.00">
-                             </div>
-                        </div>
-                        
-                        <div class="grid grid-cols-2 gap-2 mt-2 text-center">
-                             <div class="bg-slate-100 p-2 rounded-lg border border-slate-200 hover:border-teal-300 transition">
-                                 <p class="text-[9px] text-slate-500 uppercase mb-1">Durasi HD (Jam)</p>
-                                 <input type="number" step="0.1" id="saranJam" class="w-full bg-white text-slate-800 text-xl font-bold text-center border-b-2 border-teal-400 focus:border-teal-600 outline-none" value="4.0" oninput="updateQbAndSpeed()">
-                                 <p id="saranNote" class="text-[8px] text-slate-400 mt-1">Normal</p>
-                             </div>
-                             <div class="bg-slate-100 p-2 rounded-lg border border-slate-200">
-                                 <p class="text-[9px] text-slate-500 uppercase mb-1">Saran Qb</p>
-                                 <p class="font-bold text-red-500 text-xl"><span id="saranQb">200</span></p>
-                                 <p id="aksesNote" class="text-[8px] text-slate-400 mt-1">Standar RS</p>
-                             </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-green-50 p-4 rounded-xl border border-green-200 mb-6">
-                        <h3 class="text-xs font-bold text-green-700 uppercase mb-3 flex justify-between">
-                            <span>Post-HD (Pulang)</span>
-                            <span class="text-[9px] bg-white px-2 py-0.5 rounded border border-green-200">Isi Belakangan</span>
-                        </h3>
-                        <div class="flex space-x-3 mb-3">
-                            <div class="w-1/2">
-                                <label class="text-[10px] font-bold text-green-600 uppercase">Berat Pulang</label>
-                                <input type="number" step="0.01" id="beratSesudah" class="w-full bg-white border border-green-300 rounded-xl p-2 font-bold text-green-700 text-lg outline-none">
-                            </div>
-                            <div class="w-1/2">
-                                <label class="text-[10px] font-bold text-green-600 uppercase">Tensi Pulang</label>
-                                <input type="text" id="tensiPost" class="w-full bg-white border border-green-300 rounded-xl p-2 font-bold text-green-700 outline-none" placeholder="110/70">
-                            </div>
-                        </div>
-                        <div class="w-1/2 pr-1.5">
-                             <label class="text-[10px] font-bold text-green-600 uppercase">Nadi Pulang</label>
-                             <input type="number" id="nadiPost" class="w-full bg-white border border-green-300 rounded-xl p-2 font-bold text-green-700 outline-none" placeholder="80">
-                        </div>
-                    </div>
-
-                    <div class="bg-red-50 p-4 rounded-xl border border-red-200 mb-6">
-                        <label class="text-xs font-bold text-red-800 block mb-2 flex items-center">
-                            <i class="fas fa-notes-medical mr-2"></i>Catatan / Keluhan Pasien
+                         <label class="text-xs font-bold text-slate-500 uppercase block mb-2 flex items-center ml-1">
+                            <i class="fas fa-sticky-note mr-2 text-yellow-500"></i>Catatan / Keluhan Hari Ini
                         </label>
-                        <textarea id="catatan" rows="3" class="w-full bg-white border border-red-300 rounded-xl p-3 text-sm text-slate-700 focus:ring-red-500 outline-none" placeholder="Contoh: Pasien mengeluh mual di jam ke-3, kram kaki kiri, pusing berputar..."></textarea>
+                        <div class="bg-yellow-50/50 p-1 rounded-2xl border border-yellow-200/60">
+                             <textarea id="catatan" rows="2" class="w-full bg-white border border-yellow-100 rounded-xl p-3 text-sm font-medium text-slate-700 focus:ring-2 focus:ring-yellow-200 outline-none resize-none" placeholder="Contoh: Pusing di jam ke-3, kram kaki, mual ringan..."></textarea>
+                        </div>
                     </div>
 
-                    <button type="submit" id="btnSimpan" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-4 rounded-xl shadow-lg transition transform active:scale-95 flex justify-center items-center">
-                        <span id="btnText">Simpan Data</span> <i class="fas fa-save ml-2"></i>
+                    <button type="submit" id="btnSimpan" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-4 rounded-2xl shadow-lg shadow-teal-200 transition-all transform active:scale-[0.98] flex justify-center items-center text-lg">
+                        <span id="btnText">Simpan Data Baru</span> <i class="fas fa-save ml-3 text-xl"></i>
                     </button>
                 </form>
             </div>
 
-            <div class="bg-white p-5 rounded-2xl shadow-md mb-6 border border-slate-100">
-                <h2 class="text-xs font-bold text-slate-400 uppercase mb-3 tracking-wider">Grafik Berat Badan</h2>
-                <div class="h-64 relative">
+            <div class="bg-white p-5 rounded-3xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.1)] mb-6 border border-slate-100">
+                <h2 class="text-sm font-black text-slate-700 uppercase mb-4 tracking-wider flex items-center"><i class="fas fa-chart-line mr-2 text-teal-500"></i> Tren Berat Badan</h2>
+                <div class="h-60 relative">
                     <canvas id="hdChart"></canvas>
                 </div>
             </div>
 
-            <div class="bg-white p-5 rounded-2xl shadow-md border border-slate-100 mb-10">
-                <h2 class="text-xs font-bold text-slate-400 uppercase mb-4 tracking-wider">Riwayat Terakhir</h2>
-                <div class="overflow-x-auto">
+            <div class="bg-white p-5 rounded-3xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.1)] mb-10 border border-slate-100">
+                <h2 class="text-sm font-black text-slate-700 uppercase mb-4 tracking-wider flex items-center"><i class="fas fa-history mr-2 text-teal-500"></i> Riwayat Terakhir</h2>
+                <div class="overflow-x-auto rounded-xl border border-slate-100">
                     <table class="w-full text-sm text-left text-slate-500">
                         <thead class="text-[10px] text-slate-400 uppercase bg-slate-50 border-b">
                             <tr>
-                                <th class="px-2 py-3 font-bold">Tgl</th>
-                                <th class="px-2 py-3 font-bold text-orange-500">Pre</th>
-                                <th class="px-2 py-3 font-bold text-green-600">Post</th>
-                                <th class="px-2 py-3 font-bold text-right">UF</th>
+                                <th class="px-3 py-3 font-bold rounded-tl-xl">Tgl</th>
+                                <th class="px-2 py-3 font-bold text-orange-500">Pre (Awal)</th>
+                                <th class="px-2 py-3 font-bold text-green-600">Post (Akhir)</th>
+                                <th class="px-3 py-3 font-bold text-right rounded-tr-xl">UF</th>
                             </tr>
                         </thead>
-                        <tbody id="historyTableBody"></tbody>
+                        <tbody id="historyTableBody" class="divide-y divide-slate-50"></tbody>
                     </table>
                 </div>
             </div>
@@ -208,6 +231,8 @@
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, updateDoc, doc, query, where, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+        // --- KONFIGURASI FIREBASE ---
+        // (PASTIKAN INI SESUAI DENGAN PROJECT ANDA)
         const firebaseConfig = {
             apiKey: "AIzaSyAvDP_wO_3GoP-dNIkYtJ9n7e69s_5EihQ",
             authDomain: "hemocare-8e0fa.firebaseapp.com",
@@ -224,28 +249,35 @@
         let currentUser = null;
         let historyCache = [];
 
+        // --- AUTHENTICATION ---
         window.loginGoogle = () => signInWithPopup(auth, provider).catch(e => alert("Login Gagal: " + e.message));
         window.logout = () => signOut(auth).then(() => location.reload());
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
+                // User Login
                 currentUser = user;
                 document.getElementById('loginPage').classList.add('hidden');
-                document.getElementById('loginPage').classList.remove('flex');
                 document.getElementById('mainApp').classList.remove('hidden');
                 document.getElementById('userName').innerText = user.displayName.split(" ")[0];
-                const todayStr = new Date().toISOString().split('T')[0];
-                document.getElementById('tanggal').value = todayStr;
-                loadDataCloud();
-                loadProfilLokal();
+                
+                // Set Tanggal Hari Ini
+                const today = new Date();
+                const offset = today.getTimezoneOffset() * 60000; // Offset dalam milidetik
+                const localISOTime = new Date(today.getTime() - offset).toISOString().slice(0, 10);
+                document.getElementById('tanggal').value = localISOTime;
+
+                loadProfilLokal(); // Load profil yang tersimpan di HP
+                loadDataCloud();   // Load data dari database
             } else {
+                // User Logout
                 currentUser = null;
                 document.getElementById('loginPage').classList.remove('hidden');
-                document.getElementById('loginPage').classList.add('flex');
                 document.getElementById('mainApp').classList.add('hidden');
             }
         });
 
+        // --- MANAJEMEN PROFIL LOKAL ---
         window.simpanProfilLokal = () => {
             localStorage.setItem('hemo_usia', document.getElementById('usia').value);
             localStorage.setItem('hemo_gender', document.getElementById('gender').value);
@@ -261,142 +293,171 @@
             if(a) document.getElementById('akses').value = a;
         };
 
-        window.updateDeskripsiEdema = () => {
-            const val = parseFloat(document.getElementById('edemaLevel').value);
-            const desc = document.getElementById('edemaDesc');
-            if(val === 0) desc.innerText = "Kondisi normal, tidak ada penumpukan cairan.";
-            else if(val === 0.25) desc.innerText = "RINGAN: Bengkak sedikit di punggung kaki/mata kaki (Pitting +1).";
-            else if(val === 0.5) desc.innerText = "SEDANG: Bengkak terlihat jelas sampai betis (Pitting +2).";
-            else if(val === 1.0) desc.innerText = "BERAT: Bengkak meluas sampai paha, perut, atau seluruh tubuh.";
-        }
-
-        // --- ADAPTIVE QB ---
+        // --- LOGIKA KALKULASI (The Brain) ---
+        
+        // 1. Adaptive Qb & Speed Warning (Dipanggil saat Waktu diedit)
         window.updateQbAndSpeed = () => {
             const bk = parseFloat(document.getElementById('beratKering').value) || 0;
             const time = parseFloat(document.getElementById('saranJam').value) || 4.0; 
             const uf = parseFloat(document.getElementById('valUF').value) || 0;
             const usia = parseInt(document.getElementById('usia').value) || 50;
             const akses = document.getElementById('akses').value;
+            const qbEl = document.getElementById('saranQb');
+            const noteEl = document.getElementById('aksesNote');
+            const speedNoteEl = document.getElementById('saranNote');
 
-            if(bk === 0) {
-                document.getElementById('saranQb').innerText = "Isi BK";
-                return;
-            }
+            if(bk === 0) { qbEl.innerText = "Isi BK"; qbEl.classList.remove('text-red-500', 'text-orange-500'); qbEl.classList.add('text-slate-400', 'text-sm'); return; }
             if(time <= 0) return;
 
-            let targetQb = 200; // Base Start
-
+            // Rumus Qb Adaptif
+            let targetQb = 200; // Base Safety
             if(akses === 'cimino') {
-                let calcQb = bk * 4; 
-                let timeFactor = 4.0 / time; 
-                targetQb = calcQb * timeFactor;
-                targetQb = Math.round(targetQb);
+                let idealQb = bk * 4;
+                targetQb = idealQb * (4.0 / time); // Adjust by time factor
             } else {
-                targetQb = 200 * (4.0 / time);
-                if(targetQb > 220) targetQb = 220;
-                targetQb = Math.round(targetQb);
+                 targetQb = 200 * (4.0 / time); // CDL base 200 adjusted
+                 if(targetQb > 220) targetQb = 220; // Hard limit CDL
             }
-
-            if(targetQb < 150) targetQb = 150;
-            if(usia > 75 && targetQb > 230) targetQb = 230;
-
-            const elQb = document.getElementById('saranQb');
-            elQb.innerText = targetQb;
             
+            targetQb = Math.round(targetQb); // Bulatkan ke satuan
+            if(targetQb < 150) targetQb = 150; // Min limit
+            if(usia > 75 && targetQb > 230) targetQb = 230; // Elderly limit
+
+            // Update UI Qb
+            qbEl.innerText = targetQb;
+            qbEl.classList.remove('text-slate-400', 'text-sm');
             if(targetQb > 250) {
-                elQb.className = "font-bold text-orange-500 text-xl";
-                document.getElementById('aksesNote').innerText = "High Efficiency";
+                qbEl.classList.add('text-orange-500'); qbEl.classList.remove('text-red-500');
+                noteEl.innerText = "High Eff.";
+                noteEl.classList.replace('bg-slate-100', 'bg-orange-100'); noteEl.classList.replace('text-slate-400', 'text-orange-600');
             } else {
-                elQb.className = "font-bold text-red-500 text-xl";
-                document.getElementById('aksesNote').innerText = (akses === 'cdl') ? "Standar CDL" : "Standar RS";
+                 qbEl.classList.add('text-red-500'); qbEl.classList.remove('text-orange-500');
+                 noteEl.innerText = (akses === 'cdl') ? "Std CDL" : "Std RS";
+                 noteEl.classList.replace('bg-orange-100', 'bg-slate-100'); noteEl.classList.replace('text-orange-600', 'text-slate-400');
             }
 
+            // Update Speed Warning (UFR)
             const realSpeed = (uf / time).toFixed(2);
-            const note = document.getElementById('saranNote');
-            
             if(realSpeed > 0.85) {
-                note.innerText = `⚠️ ${realSpeed} L/j (Cepat)`;
-                note.className = "text-[8px] text-red-500 font-bold animate-pulse mt-1";
+                speedNoteEl.innerHTML = `<i class="fas fa-exclamation-triangle mr-1"></i>${realSpeed} L/j (Cepat)`;
+                speedNoteEl.className = "text-[9px] font-bold text-red-500 animate-pulse";
             } else {
-                note.innerText = `${realSpeed} L/j (Aman)`;
-                note.className = "text-[8px] text-slate-400 mt-1";
+                speedNoteEl.innerHTML = `<i class="fas fa-check-circle mr-1"></i>${realSpeed} L/j (Aman)`;
+                speedNoteEl.className = "text-[9px] font-bold text-teal-600";
             }
         }
 
+        // 2. Hitung Otomatis Utama (Dipanggil input lain)
         window.hitungOtomatis = () => {
             let bKering = parseFloat(document.getElementById('beratKering').value) || 0;
             let bBasah = parseFloat(document.getElementById('beratBasah').value) || 0;
             let inputIntake = document.getElementById('intake').value;
             let edemaVal = parseFloat(document.getElementById('edemaLevel').value) || 0;
             let intakeVal = inputIntake === "" ? 0 : parseFloat(inputIntake);
-            
+            let usia = parseInt(document.getElementById('usia').value) || 50;
+            let gender = document.getElementById('gender').value;
+
+            // Hitung UF Goal
             let idwg = bBasah - bKering;
             if(idwg < 0) idwg = 0;
             let totalUF = idwg + intakeVal + edemaVal;
-
             document.getElementById('valUF').value = totalUF.toFixed(2);
 
-            // Waktu Default
+            // Saran Waktu Awal (Hanya saran, user bisa edit)
             let finalJam = 4.0;
-            // Logic optional: auto adjust based on patient profile if needed
-            // Tapi disini kita set default 4.0 atau biarkan user edit
+            // Jika lansia/wanita & UF besar, sarankan waktu lebih lama
+            if(totalUF > 3.0 && (usia > 60 || gender === 'wanita')) {
+                 let safetyFactor = (usia > 70) ? 10 : 12;
+                 let maxUFR = (bKering * safetyFactor) / 1000; 
+                 if(maxUFR > 0) finalJam = totalUF / maxUFR;
+                 if(finalJam < 4.0) finalJam = 4.0;
+                 if(finalJam > 5.0) finalJam = 5.0;
+            }
+            // Set nilai hanya jika user belum mengubahnya secara manual (logika sederhana: jika masih default 4.0 atau 5.0)
+            let currentTime = parseFloat(document.getElementById('saranJam').value);
+            if(currentTime === 4.0 || currentTime === 5.0 || isNaN(currentTime)) {
+                 document.getElementById('saranJam').value = finalJam.toFixed(1);
+            }
 
-            document.getElementById('saranJam').value = finalJam.toFixed(1);
+            // Panggil perhitungan Qb adaptif
             updateQbAndSpeed();
         };
 
+
+        // --- MANAJEMEN DATA (Cloud & Tanggal) ---
+
+        // Cek apakah tanggal yang dipilih sudah ada datanya
         window.cekDataTanggalIni = () => {
             const tglPilihan = document.getElementById('tanggal').value;
             const dataAda = historyCache.find(item => item.date === tglPilihan);
-            
+            const btnSimpan = document.getElementById('btnSimpan');
+            const btnText = document.getElementById('btnText');
+
             if(dataAda) {
+                // MODE UPDATE: Isi form dengan data yang ada
                 document.getElementById('docId').value = dataAda.id;
                 document.getElementById('beratKering').value = dataAda.bk;
                 document.getElementById('beratBasah').value = dataAda.bb;
                 document.getElementById('intake').value = dataAda.intake;
                 document.getElementById('valUF').value = dataAda.uf;
                 document.getElementById('edemaLevel').value = dataAda.edema_level || 0;
-                document.getElementById('catatan').value = dataAda.catatan || ""; // Load Catatan
-                updateDeskripsiEdema();
-
+                document.getElementById('catatan').value = dataAda.catatan || "";
+                
                 if(dataAda.waktu_hd) document.getElementById('saranJam').value = dataAda.waktu_hd;
-                updateQbAndSpeed();
-
+                
                 document.getElementById('tensiPre').value = dataAda.tensi_pre || "";
                 document.getElementById('nadiPre').value = dataAda.nadi_pre || "";
                 document.getElementById('beratSesudah').value = dataAda.bb_sesudah || "";
                 document.getElementById('tensiPost').value = dataAda.tensi_post || "";
                 document.getElementById('nadiPost').value = dataAda.nadi_post || "";
 
-                document.getElementById('btnText').innerText = "Update Data";
-                document.getElementById('btnSimpan').classList.replace('bg-teal-600', 'bg-blue-600');
+                // Ubah Tampilan Tombol
+                btnText.innerText = "Update Data Tanggal Ini";
+                btnSimpan.classList.replace('bg-teal-600', 'bg-blue-600');
+                btnSimpan.classList.replace('shadow-teal-200', 'shadow-blue-200');
+                btnSimpan.querySelector('.fa-save').classList.replace('fa-save', 'fa-sync-alt');
+
             } else {
+                // MODE BARU: Reset form
                 document.getElementById('docId').value = "";
+                // Keep Berat Kering if available from history
+                if(historyCache.length > 0) {
+                     document.getElementById('beratKering').value = historyCache[0].bk;
+                } else {
+                     document.getElementById('beratKering').value = "";
+                }
                 document.getElementById('beratBasah').value = "";
                 document.getElementById('intake').value = "";
                 document.getElementById('valUF').value = "0.00";
                 document.getElementById('edemaLevel').value = 0;
-                updateDeskripsiEdema();
+                document.getElementById('catatan').value = "";
+                document.getElementById('saranJam').value = "4.0";
+                
                 document.getElementById('tensiPre').value = "";
                 document.getElementById('nadiPre').value = "";
                 document.getElementById('beratSesudah').value = "";
                 document.getElementById('tensiPost').value = "";
                 document.getElementById('nadiPost').value = "";
-                document.getElementById('catatan').value = ""; // Reset Catatan
-                document.getElementById('saranQb').innerText = "200";
-                document.getElementById('saranNote').innerText = "Normal";
-                document.getElementById('btnText').innerText = "Simpan Baru";
-                document.getElementById('btnSimpan').classList.replace('bg-blue-600', 'bg-teal-600');
+
+                // Reset Tombol
+                btnText.innerText = "Simpan Data Baru";
+                btnSimpan.classList.replace('bg-blue-600', 'bg-teal-600');
+                btnSimpan.classList.replace('shadow-blue-200', 'shadow-teal-200');
+                btnSimpan.querySelector('.fa-sync-alt')?.classList.replace('fa-sync-alt', 'fa-save');
             }
+             // Hitung ulang untuk refresh tampilan Qb/Speed
+            hitungOtomatis();
         }
 
+        // Load Data dari Firebase
         async function loadDataCloud() {
             if(!currentUser) return;
+            // Query dengan sorting tanggal descending (terbaru diatas)
             const q = query(collection(db, "riwayat_hd"), where("uid", "==", currentUser.uid), orderBy("date", "desc"));
 
             try {
                 const querySnapshot = await getDocs(q);
-                historyCache = [];
+                historyCache = []; // Reset cache
                 const tbody = document.getElementById('historyTableBody');
                 tbody.innerHTML = '';
 
@@ -405,73 +466,90 @@
                     item.id = docSnap.id;
                     historyCache.push(item);
 
-                    let displayBBSesudah = item.bb_sesudah ? `<strong>${item.bb_sesudah}</strong>` : '-';
-                    
-                    // DISPLAY TENSI & NADI PRE
+                    // Format Tampilan Tabel
+                    let displayBBSesudah = item.bb_sesudah ? `<strong class="text-sm">${item.bb_sesudah}</strong>` : '<span class="text-slate-300">-</span>';
+                    let edemaBadge = item.edema_level > 0 ? `<span class="text-[9px] bg-yellow-100 text-yellow-800 px-1.5 py-0.5 rounded-full font-bold ml-1">+${item.edema_level}</span>` : '';
+                    let dateParts = item.date.split('-');
+                    let formattedDate = `${dateParts[2]}/${dateParts[1]}<br><span class="text-[10px] opacity-70">${dateParts[0].substring(2)}</span>`;
+
+                    // Tampilan Pre (Bertumpuk)
                     let displayPre = `
-                        <div class="font-bold text-orange-600">${item.bb}</div>
-                        <div class="text-[9px] text-slate-500">
-                            <i class="fas fa-heartbeat"></i> ${item.tensi_pre || '-'}
-                            ${item.nadi_pre ? `(${item.nadi_pre})` : ''}
+                        <div class="font-black text-sm text-orange-600">${item.bb}</div>
+                        <div class="text-[10px] text-slate-500 mt-0.5 flex items-center">
+                            <i class="fas fa-heartbeat mr-1 text-orange-300"></i> ${item.tensi_pre || '-'}
                         </div>
+                        ${item.nadi_pre ? `<div class="text-[10px] text-slate-400 ml-4">${item.nadi_pre} bpm</div>` : ''}
                     `;
 
-                    // DISPLAY TENSI & NADI POST
+                    // Tampilan Post (Bertumpuk)
                     let displayPost = `
-                        <div class="font-bold text-green-600">${displayBBSesudah}</div>
-                        <div class="text-[9px] text-slate-500">
-                            <i class="fas fa-heartbeat"></i> ${item.tensi_post || '-'}
-                            ${item.nadi_post ? `(${item.nadi_post})` : ''}
+                        <div class="font-black text-sm text-green-600">${displayBBSesudah}</div>
+                        <div class="text-[10px] text-slate-500 mt-0.5 flex items-center">
+                            <i class="fas fa-heartbeat mr-1 text-green-300"></i> ${item.tensi_post || '-'}
                         </div>
+                        ${item.nadi_post ? `<div class="text-[10px] text-slate-400 ml-4">${item.nadi_post} bpm</div>` : ''}
                     `;
-
-                    let edemaBadge = item.edema_level > 0 ? `<span class="text-[8px] bg-yellow-100 text-yellow-800 px-1 rounded">+${item.edema_level}</span>` : '';
                     
-                    // Tampilkan Catatan jika ada
+                    // Tampilan Catatan (Highlight Kuning)
                     let noteDisplay = '';
                     if (item.catatan) {
                         noteDisplay = `
-                        <div class="col-span-4 mt-1 p-1 bg-red-50 border-l-2 border-red-400 text-[9px] text-slate-600 italic">
-                            <i class="fas fa-info-circle text-red-400 mr-1"></i> ${item.catatan}
-                        </div>`;
+                        <tr class="bg-yellow-50/40 border-b border-slate-50">
+                            <td colspan="4" class="px-3 py-2">
+                                <div class="flex items-start text-[11px] text-slate-600 italic bg-white/50 p-2 rounded-lg border-l-2 border-yellow-400">
+                                    <i class="fas fa-sticky-note text-yellow-500 mr-2 mt-0.5"></i> 
+                                    <span>"${item.catatan}"</span>
+                                </div>
+                            </td>
+                        </tr>`;
                     }
 
+                    // Row Utama
                     let row = `
-                        <tr class="bg-white border-b hover:bg-slate-50 transition">
-                            <td class="px-2 py-3 text-xs text-slate-500 align-top">
-                                ${item.date.split('-')[2]}/${item.date.split('-')[1]}
-                                <br>${edemaBadge}
+                        <tr class="bg-white hover:bg-slate-50 transition border-b border-slate-100">
+                            <td class="px-3 py-3 text-xs text-slate-600 leading-tight">
+                                ${formattedDate}
+                                <div class="mt-1">${edemaBadge}</div>
                             </td>
-                            <td class="px-2 py-3 text-xs align-top">${displayPre}</td>
-                            <td class="px-2 py-3 text-xs align-top">${displayPost}</td>
-                            <td class="px-2 py-3 font-bold text-slate-800 text-right align-top">${item.uf}L</td>
+                            <td class="px-2 py-3 align-top bg-orange-50/30">${displayPre}</td>
+                            <td class="px-2 py-3 align-top bg-green-50/30">${displayPost}</td>
+                            <td class="px-3 py-3 font-black text-slate-700 text-right text-base align-top">${item.uf}<span class="text-xs font-bold text-slate-400 ml-0.5">L</span></td>
                         </tr>
-                        ${item.catatan ? `<tr><td colspan="4" class="px-2 pb-2">${noteDisplay}</td></tr>` : ''}
-                    `;
+                        ${noteDisplay} `;
                     tbody.insertAdjacentHTML('beforeend', row);
                 });
                 
-                if(historyCache.length > 0 && !document.getElementById('beratKering').value) {
-                     document.getElementById('beratKering').value = historyCache[0].bk;
-                }
-
+                // Sinkronisasi form dengan data yang baru diload
                 cekDataTanggalIni();
+                // Update grafik (data dibalik agar kronologis dari kiri ke kanan)
                 updateChartCloud([...historyCache].reverse());
 
             } catch (error) {
                 console.error("Error Load Data:", error);
+                // Alert jika index belum dibuat di Firebase Console
+                if(error.message.includes("index")) {
+                     alert("PENTING: Database memerlukan 'Index'. Silahkan buka Console Browser (F12) untuk melihat link pembuatan index di Firebase.");
+                }
             }
         }
 
+        // Simpan Data ke Firebase
         window.simpanKeCloud = async (e) => {
             e.preventDefault();
             if(!currentUser) return alert("Silahkan login ulang.");
 
-            const btnText = document.getElementById('btnText');
             const btn = document.getElementById('btnSimpan');
+            const btnText = document.getElementById('btnText');
+            const originalText = btnText.innerText;
+            const originalIcon = btn.querySelector('i').className;
+            
+            // Ubah status tombol saat proses
             btnText.innerText = "Menyimpan...";
+            btn.querySelector('i').className = "fas fa-spinner fa-spin ml-3";
             btn.disabled = true;
+            btn.classList.add('opacity-70', 'cursor-not-allowed');
 
+            // Siapkan data
             const dataPayload = {
                 uid: currentUser.uid,
                 date: document.getElementById('tanggal').value,
@@ -483,59 +561,83 @@
                 edema_level: parseFloat(document.getElementById('edemaLevel').value) || 0,
                 uf: document.getElementById('valUF').value, 
                 waktu_hd: document.getElementById('saranJam').value, 
+                // Data Post bisa null jika belum diisi
                 bb_sesudah: document.getElementById('beratSesudah').value ? parseFloat(document.getElementById('beratSesudah').value) : null,
                 tensi_post: document.getElementById('tensiPost').value,
                 nadi_post: document.getElementById('nadiPost').value,
-                catatan: document.getElementById('catatan').value, // Simpan Catatan
-                timestamp: new Date()
+                catatan: document.getElementById('catatan').value,
+                timestamp: new Date() // Untuk keperluan internal DB
             };
 
             const docId = document.getElementById('docId').value;
 
             try {
                 if (docId) {
+                    // Mode Update
                     await updateDoc(doc(db, "riwayat_hd", docId), dataPayload);
-                    alert("Update Berhasil!");
+                    showNotification("Data berhasil diperbarui!", "success");
                 } else {
+                    // Mode Simpan Baru
                     await addDoc(collection(db, "riwayat_hd"), dataPayload);
-                    alert("Data Tersimpan!");
+                    showNotification("Data baru berhasil disimpan!", "success");
                 }
+                // Reload data untuk refresh tabel dan grafik
                 await loadDataCloud();
             } catch (error) {
                 console.error(error);
-                alert("Gagal: " + error.message);
+                showNotification("Gagal menyimpan: " + error.message, "error");
             } finally {
-                btnText.innerText = "Simpan Data";
+                // Kembalikan status tombol
+                btnText.innerText = originalText;
+                btn.querySelector('i').className = originalIcon;
                 btn.disabled = false;
+                btn.classList.remove('opacity-70', 'cursor-not-allowed');
             }
         };
 
+        // Notifikasi Sederhana (Pengganti Alert)
+        function showNotification(message, type) {
+            // Bisa dikembangkan menjadi toast notification yang lebih cantik
+            alert(message); 
+        }
+
+
+        // --- VISUALISASI (CHART.JS) ---
         let myChart = null;
         function updateChartCloud(data) {
             const ctx = document.getElementById('hdChart').getContext('2d');
             if (myChart) myChart.destroy();
+            
+            // Ambil 7 data terakhir untuk grafik
             const recentData = data.slice(-7);
 
             myChart = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: recentData.map(d => `${d.date.split('-')[2]}/${d.date.split('-')[1]}`),
+                    labels: recentData.map(d => {
+                         let parts = d.date.split('-');
+                         return `${parts[2]}/${parts[1]}`; // Format DD/MM
+                    }),
                     datasets: [
                         {
-                            label: 'Berat Kering',
+                            label: 'Berat Kering (Target)',
                             data: recentData.map(d => d.bk),
-                            borderColor: '#0d9488',
-                            backgroundColor: 'rgba(13, 148, 136, 0.1)',
+                            borderColor: '#0d9488', // Teal
+                            backgroundColor: 'rgba(13, 148, 136, 0.05)',
                             borderWidth: 2,
+                            pointRadius: 3,
+                            pointBackgroundColor: '#0d9488',
                             fill: true,
                             tension: 0.3
                         },
                         {
-                            label: 'Berat Datang',
+                            label: 'Berat Datang (Aktual)',
                             data: recentData.map(d => d.bb),
-                            borderColor: '#f97316',
+                            borderColor: '#f97316', // Orange
                             borderDash: [5, 5],
                             borderWidth: 2,
+                            pointRadius: 4,
+                            pointBackgroundColor: '#f97316',
                             tension: 0.3
                         }
                     ]
@@ -543,11 +645,39 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { position: 'bottom' } }
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { boxWidth: 12, font: { size: 11 } }
+                        },
+                        tooltip: {
+                             backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                             titleColor: '#1e293b',
+                             bodyColor: '#475569',
+                             borderColor: '#e2e8f0',
+                             borderWidth: 1,
+                             padding: 10,
+                             displayColors: true
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false, // Agar grafik fokus pada range berat badan
+                            grid: { color: '#f1f5f9' },
+                            ticks: { font: { size: 10 }, color: '#94a3b8' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { size: 10 }, color: '#94a3b8' }
+                        }
+                    }
                 }
             });
         }
     </script>
 </body>
 </html>
-
