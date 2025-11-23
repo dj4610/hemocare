@@ -479,10 +479,19 @@
                     historyCache.push(item);
 
                     let displayBBSesudah = item.bb_sesudah ? `<strong class="text-sm">${item.bb_sesudah}</strong>` : '<span class="text-slate-300">-</span>';
+                    
+                    // --- MODIFIKASI: LABEL DAN WARNA EDEMA ---
                     let edemaBadge = '';
-                    if(item.edema_level == 0.25) edemaBadge = `<span class="text-[8px] bg-yellow-100 text-yellow-700 border border-yellow-200 px-1.5 py-0.5 rounded-full ml-1">Ringan</span>`;
-                    else if(item.edema_level == 0.5) edemaBadge = `<span class="text-[8px] bg-orange-100 text-orange-700 border border-orange-200 px-1.5 py-0.5 rounded-full ml-1">Sedang</span>`;
-                    else if(item.edema_level == 1.0) edemaBadge = `<span class="text-[8px] bg-red-100 text-red-700 border border-red-200 px-1.5 py-0.5 rounded-full ml-1">Berat</span>`;
+                    if(item.edema_level == 0) {
+                         edemaBadge = `<span class="text-[8px] bg-emerald-100 text-emerald-700 border border-emerald-200 px-1.5 py-0.5 rounded-full ml-1">Normal</span>`;
+                    } else if(item.edema_level == 0.25) {
+                         edemaBadge = `<span class="text-[8px] bg-yellow-100 text-yellow-800 border border-yellow-200 px-1.5 py-0.5 rounded-full ml-1">Edema Ringan</span>`;
+                    } else if(item.edema_level == 0.5) {
+                         edemaBadge = `<span class="text-[8px] bg-orange-100 text-orange-700 border border-orange-200 px-1.5 py-0.5 rounded-full ml-1">Edema Sedang</span>`;
+                    } else if(item.edema_level == 1.0) {
+                         edemaBadge = `<span class="text-[8px] bg-red-100 text-red-700 border border-red-200 px-1.5 py-0.5 rounded-full ml-1">Edema Berat</span>`;
+                    }
+                    // -----------------------------------------
 
                     let formattedDate = formatTglSingkat(item.date);
 
