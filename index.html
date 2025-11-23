@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hemocare by Inferno-X</title>
+    <title>Hemocare by Inferno</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -34,7 +34,7 @@
                 Masuk dengan Google
             </button>
         </div>
-        <p class="text-teal-100/60 text-xs mt-8">©2025 Inferno-X </p>
+        <p class="text-teal-100/60 text-xs mt-8">©2025 Inferno</p>
     </div>
 
     <div id="mainApp" class="hidden min-h-screen flex flex-col max-w-md mx-auto bg-white shadow-xl">
@@ -240,7 +240,6 @@
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, updateDoc, doc, query, where, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // KONFIGURASI FIREBASE (PASTIKAN INI SESUAI MILIK ANDA)
         const firebaseConfig = {
             apiKey: "AIzaSyAvDP_wO_3GoP-dNIkYtJ9n7e69s_5EihQ",
             authDomain: "hemocare-8e0fa.firebaseapp.com",
@@ -308,6 +307,7 @@
             if(a) document.getElementById('akses').value = a;
         };
 
+        // --- PERBAIKAN DESKRIPSI EDEMA (Di form input) ---
         window.updateDeskripsiEdema = () => {
             const val = parseFloat(document.getElementById('edemaLevel').value);
             const container = document.getElementById('edemaContainer');
@@ -430,9 +430,9 @@
             } else {
                 document.getElementById('docId').value = "";
                 if(historyCache.length > 0) {
-                      document.getElementById('beratKering').value = historyCache[0].bk;
+                     document.getElementById('beratKering').value = historyCache[0].bk;
                 } else {
-                      document.getElementById('beratKering').value = "";
+                     document.getElementById('beratKering').value = "";
                 }
                 document.getElementById('beratBasah').value = "";
                 document.getElementById('intake').value = "";
@@ -472,7 +472,7 @@
 
                     let displayBBSesudah = item.bb_sesudah ? `<strong class="text-sm">${item.bb_sesudah}</strong>` : '<span class="text-slate-300">-</span>';
                     
-                    // --- LOGIKA WARNA & TEXT EDEMA (DIPERBARUI) ---
+                    // --- LOGIKA WARNA & TEXT EDEMA (DIPERBARUI SESUAI PERMINTAAN) ---
                     let edemaLabel = '';
                     const edemaVal = parseFloat(item.edema_level);
                     
@@ -489,7 +489,7 @@
                         // Merah / Rose untuk Berat
                         edemaLabel = `<span class="text-[8px] bg-rose-100 text-rose-800 border border-rose-200 px-1.5 py-0.5 rounded-full ml-1">Edema Berat</span>`;
                     }
-                    // -----------------------------------------------
+                    // ----------------------------------------------------------------
 
                     let formattedDate = formatTglSingkat(item.date);
 
@@ -607,8 +607,8 @@
                 type: 'line',
                 data: {
                     labels: recentData.map(d => {
-                          let parts = d.date.split('-');
-                          return `${parts[2]}/${parts[1]}`; 
+                         let parts = d.date.split('-');
+                         return `${parts[2]}/${parts[1]}`; 
                     }),
                     datasets: [
                         {
