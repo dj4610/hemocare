@@ -11,7 +11,6 @@
 
     <style>
         body { font-family: 'Segoe UI', sans-serif; background-color: #f0f9ff; }
-        /* Hilangkan panah input number */
         input[type=number]::-webkit-inner-spin-button, 
         input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         .loader { border-top-color: #0d9488; -webkit-animation: spinner 1.5s linear infinite; animation: spinner 1.5s linear infinite; }
@@ -76,34 +75,18 @@
                         </div>
                     </div>
 
-                    <div class="flex space-x-3 mb-4">
-                        <div class="w-1/2">
-                            <label class="text-[10px] font-bold text-slate-400 uppercase">BK Sebelumnya</label>
-                            <input type="number" step="0.01" id="beratKering" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 font-bold text-teal-700 text-lg mt-1" required oninput="hitungOtomatis()">
-                        </div>
-                        <div class="w-1/2">
-                            <label class="text-[10px] font-bold text-slate-400 uppercase">Berat Datang</label>
-                            <input type="number" step="0.01" id="beratBasah" class="w-full bg-white border-2 border-orange-200 rounded-xl p-2 font-bold text-orange-600 text-lg mt-1" required oninput="hitungOtomatis()">
-                        </div>
-                    </div>
-
-                    <div class="bg-blue-50/50 p-3 rounded-xl border border-blue-100 mb-4">
-                        <h3 class="text-xs font-bold text-slate-500 uppercase mb-2 flex items-center">
-                            <i class="fas fa-heartbeat mr-1.5 text-red-400"></i> Tensi & Nadi Awal
-                        </h3>
-                        <div class="flex space-x-3">
-                            <div class="w-1/2 relative">
-                                <input type="text" id="tensiPre" class="w-full bg-white border border-blue-200 rounded-lg p-2 text-sm font-bold text-slate-700 text-center" placeholder="120/80">
-                                <span class="absolute right-2 top-2 text-[9px] text-slate-400">mmHg</span>
-                            </div>
-                            <div class="w-1/2 relative">
-                                <input type="number" id="nadiPre" class="w-full bg-white border border-blue-200 rounded-lg p-2 text-sm font-bold text-slate-700 text-center" placeholder="80">
-                                <span class="absolute right-2 top-2 text-[9px] text-slate-400">bpm</span>
-                            </div>
-                        </div>
-                    </div>
-
                     <div class="mb-6">
+                        <div class="flex space-x-3 mb-3">
+                            <div class="w-1/2">
+                                <label class="text-[10px] font-bold text-slate-400 uppercase">BK Sebelumnya</label>
+                                <input type="number" step="0.01" id="beratKering" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 font-bold text-teal-700 text-lg mt-1" required oninput="hitungOtomatis()">
+                            </div>
+                            <div class="w-1/2">
+                                <label class="text-[10px] font-bold text-slate-400 uppercase">Berat Datang</label>
+                                <input type="number" step="0.01" id="beratBasah" class="w-full bg-white border-2 border-orange-200 rounded-xl p-2 font-bold text-orange-600 text-lg mt-1" required oninput="hitungOtomatis()">
+                            </div>
+                        </div>
+
                         <div class="bg-yellow-50 p-3 rounded-xl border border-yellow-200 mb-3">
                             <label class="text-xs font-bold text-yellow-800 block mb-1">Status Edema</label>
                             <select id="edemaLevel" class="w-full bg-white border border-yellow-300 text-yellow-900 text-sm rounded-lg p-2 font-semibold mb-2" onchange="updateDeskripsiEdema(); hitungOtomatis()">
@@ -131,7 +114,7 @@
                         <div class="grid grid-cols-2 gap-2 mt-2 text-center">
                              <div class="bg-slate-100 p-2 rounded-lg border border-slate-200">
                                  <p class="text-[9px] text-slate-500 uppercase mb-1">Durasi HD (Jam)</p>
-                                 <input type="number" step="0.1" id="saranJam" class="w-full bg-white text-slate-800 text-xl font-bold text-center border-b-2 border-teal-400 focus:border-teal-600 outline-none" value="4.0" oninput="updateSpeedNote()">
+                                 <input type="number" step="0.1" id="saranJam" class="w-full bg-white text-slate-800 text-xl font-bold text-center border-b-2 border-teal-400 focus:border-teal-600 outline-none" value="4.0" oninput="updateQbAndSpeed()">
                                  <p id="saranNote" class="text-[8px] text-slate-400 mt-1">Normal</p>
                              </div>
                              <div class="bg-slate-100 p-2 rounded-lg border border-slate-200">
@@ -139,6 +122,22 @@
                                  <p class="font-bold text-red-500 text-xl"><span id="saranQb">0</span></p>
                                  <p id="aksesNote" class="text-[8px] text-slate-400 mt-1">Akses</p>
                              </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-blue-50/50 p-3 rounded-xl border border-blue-100 mb-4">
+                        <h3 class="text-xs font-bold text-slate-500 uppercase mb-2 flex items-center">
+                            <i class="fas fa-heartbeat mr-1.5 text-red-400"></i> Tensi & Nadi Awal
+                        </h3>
+                        <div class="flex space-x-3">
+                            <div class="w-1/2 relative">
+                                <input type="text" id="tensiPre" class="w-full bg-white border border-blue-200 rounded-lg p-2 text-sm font-bold text-slate-700 text-center" placeholder="120/80">
+                                <span class="absolute right-2 top-2 text-[9px] text-slate-400">mmHg</span>
+                            </div>
+                            <div class="w-1/2 relative">
+                                <input type="number" id="nadiPre" class="w-full bg-white border border-blue-200 rounded-lg p-2 text-sm font-bold text-slate-700 text-center" placeholder="80">
+                                <span class="absolute right-2 top-2 text-[9px] text-slate-400">bpm</span>
+                            </div>
                         </div>
                     </div>
 
@@ -226,10 +225,8 @@
                 document.getElementById('loginPage').classList.remove('flex');
                 document.getElementById('mainApp').classList.remove('hidden');
                 document.getElementById('userName').innerText = user.displayName.split(" ")[0];
-                
                 const todayStr = new Date().toISOString().split('T')[0];
                 document.getElementById('tanggal').value = todayStr;
-                
                 loadDataCloud();
                 loadProfilLokal();
             } else {
@@ -264,20 +261,50 @@
             else if(val === 1.0) desc.innerText = "BERAT: Bengkak meluas sampai paha, perut, atau seluruh tubuh.";
         }
 
-        window.updateSpeedNote = () => {
+        // --- LOGIKA ADAPTIVE QB (INTI DARI REQUEST ANDA) ---
+        window.updateQbAndSpeed = () => {
+            const bk = parseFloat(document.getElementById('beratKering').value) || 0;
+            // Ambil WAKTU REALTIME yang diedit user
+            const time = parseFloat(document.getElementById('saranJam').value) || 4.0; 
             const uf = parseFloat(document.getElementById('valUF').value) || 0;
-            const time = parseFloat(document.getElementById('saranJam').value) || 4.0;
-            const note = document.getElementById('saranNote');
+            const usia = parseInt(document.getElementById('usia').value) || 50;
+            const akses = document.getElementById('akses').value;
 
-            if(time <= 0) return;
+            if(bk === 0 || time <= 0) return;
+
+            // 1. Hitung Qb Dasar (Standard 4 Jam)
+            let baseQb = bk * 4; 
+
+            // 2. Penyesuaian: Jika Waktu < 4 jam, Qb NAIK. Jika Waktu > 4 jam, Qb TURUN.
+            // Rumus: (BaseQb * 4) / RealTime
+            let adjustedQb = (baseQb * 4.0) / time;
+
+            // 3. Limit Safety
+            if(akses === 'cdl') {
+                if(adjustedQb > 230) adjustedQb = 230; 
+            }
+            if(usia > 70) {
+                if(adjustedQb > 250) adjustedQb = 250;
+            }
+
+            // 4. Pembulatan
+            adjustedQb = Math.floor(adjustedQb / 10) * 10;
+            if(adjustedQb < 150) adjustedQb = 150;
+
+            // Update UI
+            document.getElementById('saranQb').innerText = adjustedQb;
+            document.getElementById('aksesNote').innerText = (akses === 'cdl') ? "Limit CDL" : "Cimino";
+
+            // Update Speed Note (UFR)
             const realSpeed = (uf / time).toFixed(2);
+            const note = document.getElementById('saranNote');
             
             if(realSpeed > 0.85) {
                 note.innerText = `⚠️ ${realSpeed} L/j (Cepat)`;
-                note.classList.add('text-red-500', 'font-bold');
+                note.className = "text-[8px] text-red-500 font-bold animate-pulse mt-1";
             } else {
                 note.innerText = `${realSpeed} L/j (Aman)`;
-                note.classList.remove('text-red-500', 'font-bold');
+                note.className = "text-[8px] text-slate-400 mt-1";
             }
         }
 
@@ -289,20 +316,18 @@
             let intakeVal = inputIntake === "" ? 0 : parseFloat(inputIntake);
             let usia = parseInt(document.getElementById('usia').value) || 50;
             let gender = document.getElementById('gender').value;
-            let akses = document.getElementById('akses').value; 
 
             let idwg = bBasah - bKering;
             if(idwg < 0) idwg = 0;
             let totalUF = idwg + intakeVal + edemaVal;
 
-            // Update UF
             document.getElementById('valUF').value = totalUF.toFixed(2);
 
-            // Logic Waktu
+            // Kalkulasi Saran Waktu Awal (Hanya sekali set, agar tidak menimpa edit manual user jika tidak perlu)
+            // Tapi di logic ini kita reset saran waktu jika data berubah signifikan
             let speedFactor = 13; 
             if(usia > 60) speedFactor = 10; 
             if(gender === 'wanita') speedFactor -= 1; 
-
             let maxUFR = (bKering * speedFactor) / 1000; 
             let calculatedJam = (maxUFR > 0) ? totalUF / maxUFR : 0;
             let finalJam = calculatedJam;
@@ -311,16 +336,8 @@
 
             document.getElementById('saranJam').value = finalJam.toFixed(1);
 
-            // Logic Qb
-            let targetQb = bKering * 4;
-            if(akses === 'cdl') { if(targetQb > 230) targetQb = 230; }
-            if(usia > 70) { if(targetQb > 250) targetQb = 250; }
-            targetQb = Math.floor(targetQb / 10) * 10;
-            if(targetQb < 150) targetQb = 150;
-            document.getElementById('saranQb').innerText = targetQb;
-            document.getElementById('aksesNote').innerText = (akses === 'cdl') ? "Limit CDL" : "Cimino";
-
-            updateSpeedNote();
+            // Panggil fungsi adaptive Qb setelah waktu ditentukan
+            updateQbAndSpeed();
         };
 
         window.cekDataTanggalIni = () => {
@@ -337,8 +354,9 @@
                 updateDeskripsiEdema();
 
                 if(dataAda.waktu_hd) document.getElementById('saranJam').value = dataAda.waktu_hd;
-                else hitungOtomatis();
-                updateSpeedNote();
+                
+                // Panggil ini untuk hitung Qb berdasarkan data yang diload
+                updateQbAndSpeed();
 
                 document.getElementById('tensiPre').value = dataAda.tensi_pre || "";
                 document.getElementById('nadiPre').value = dataAda.nadi_pre || "";
@@ -361,6 +379,10 @@
                 document.getElementById('beratSesudah').value = "";
                 document.getElementById('tensiPost').value = "";
                 document.getElementById('nadiPost').value = "";
+                
+                // Reset Qb
+                document.getElementById('saranQb').innerText = "0";
+                document.getElementById('saranNote').innerText = "Normal";
 
                 document.getElementById('btnText').innerText = "Simpan Baru";
                 document.getElementById('btnSimpan').classList.replace('bg-blue-600', 'bg-teal-600');
