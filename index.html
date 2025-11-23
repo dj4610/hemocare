@@ -58,6 +58,23 @@
                 <form id="hdForm" onsubmit="simpanKeCloud(event)">
                     <input type="hidden" id="docId">
 
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 mb-4">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2">Profil & Akses (Wajib untuk Hitungan Qb/Waktu)</label>
+                        <div class="grid grid-cols-3 gap-2">
+                            <input type="number" id="usia" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs font-semibold focus:border-teal-500 outline-none" placeholder="Usia (Thn)" oninput="simpanProfilLokal(); hitungOtomatis()">
+                            
+                            <select id="gender" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs font-semibold focus:border-teal-500 outline-none" onchange="simpanProfilLokal(); hitungOtomatis()">
+                                <option value="pria">Pria</option>
+                                <option value="wanita">Wanita</option>
+                            </select>
+
+                            <select id="akses" class="w-full bg-teal-50 border border-teal-300 text-teal-800 rounded-lg p-2 text-xs font-bold focus:border-teal-500 outline-none" onchange="simpanProfilLokal(); hitungOtomatis()">
+                                <option value="cimino">Cimino</option>
+                                <option value="cdl">CDL/Paha</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <div class="mb-6">
                         <div class="flex space-x-3 mb-3">
                             <div class="w-1/2">
@@ -93,7 +110,19 @@
                                 <input type="number" step="0.01" id="valUF" class="w-full bg-slate-800 border-2 border-teal-500 rounded-xl p-2 font-bold text-teal-400 text-2xl text-center" value="0.00">
                              </div>
                         </div>
-                        <p class="text-[9px] text-slate-400 text-right italic">*UF Goal menghitung otomatis, tapi bisa Anda edit manual.</p>
+                        
+                        <div class="grid grid-cols-2 gap-2 mt-2 text-center">
+                             <div class="bg-slate-100 p-2 rounded-lg">
+                                 <p class="text-[9px] text-slate-500 uppercase">Saran Waktu</p>
+                                 <p class="font-bold text-slate-700"><span id="saranJam">4.0</span> Jam</p>
+                                 <p id="saranNote" class="text-[8px] text-slate-400">Normal</p>
+                             </div>
+                             <div class="bg-slate-100 p-2 rounded-lg">
+                                 <p class="text-[9px] text-slate-500 uppercase">Saran Qb</p>
+                                 <p class="font-bold text-red-500"><span id="saranQb">0</span></p>
+                                 <p id="aksesNote" class="text-[8px] text-slate-400">Akses</p>
+                             </div>
+                        </div>
                     </div>
 
                     <div class="border-t border-slate-100 pt-4 mb-4">
@@ -134,11 +163,6 @@
                         </div>
                     </div>
 
-                    <div class="hidden">
-                        <input type="number" id="usia">
-                        <select id="gender"><option value="pria">Pria</option><option value="wanita">Wanita</option></select>
-                    </div>
-
                     <button type="submit" id="btnSimpan" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-4 rounded-xl shadow-lg transition transform active:scale-95 flex justify-center items-center">
                         <span id="btnText">Simpan Data</span> <i class="fas fa-save ml-2"></i>
                     </button>
@@ -176,7 +200,7 @@
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, updateDoc, doc, query, where, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // KONFIGURASI FIREBASE (GANTI API KEY ANDA)
+        // KONFIGURASI FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyAvDP_wO_3GoP-dNIkYtJ9n7e69s_5EihQ",
             authDomain: "hemocare-8e0fa.firebaseapp.com",
@@ -191,9 +215,8 @@
         const db = getFirestore(app);
         const provider = new GoogleAuthProvider();
         let currentUser = null;
-        let historyCache = []; // Menyimpan data agar tidak bolak balik request
+        let historyCache = [];
 
-        // AUTH
         window.loginGoogle = () => signInWithPopup(auth, provider).catch(e => alert("Login Gagal: " + e.message));
         window.logout = () => signOut(auth).then(() => location.reload());
 
@@ -205,11 +228,11 @@
                 document.getElementById('mainApp').classList.remove('hidden');
                 document.getElementById('userName').innerText = user.displayName.split(" ")[0];
                 
-                // Set default tanggal hari ini
                 const todayStr = new Date().toISOString().split('T')[0];
                 document.getElementById('tanggal').value = todayStr;
                 
-                loadDataCloud(); // Load data
+                loadDataCloud();
+                loadProfilLokal(); // PENTING: Load profil agar hitungan benar
             } else {
                 currentUser = null;
                 document.getElementById('loginPage').classList.remove('hidden');
@@ -217,6 +240,22 @@
                 document.getElementById('mainApp').classList.add('hidden');
             }
         });
+
+        // --- PROFIL LOKAL ---
+        window.simpanProfilLokal = () => {
+            localStorage.setItem('hemo_usia', document.getElementById('usia').value);
+            localStorage.setItem('hemo_gender', document.getElementById('gender').value);
+            localStorage.setItem('hemo_akses', document.getElementById('akses').value);
+        };
+
+        window.loadProfilLokal = () => {
+            const u = localStorage.getItem('hemo_usia');
+            const g = localStorage.getItem('hemo_gender');
+            const a = localStorage.getItem('hemo_akses');
+            if(u) document.getElementById('usia').value = u;
+            if(g) document.getElementById('gender').value = g;
+            if(a) document.getElementById('akses').value = a;
+        };
 
         // --- LOGIKA EDEMA & DESKRIPSI ---
         window.updateDeskripsiEdema = () => {
@@ -229,7 +268,7 @@
             else if(val === 1.0) desc.innerText = "BERAT: Bengkak meluas sampai paha, perut, atau seluruh tubuh.";
         }
 
-        // --- HITUNG OTOMATIS ---
+        // --- HITUNG OTOMATIS (Logic Waktu & Qb) ---
         window.hitungOtomatis = () => {
             let bKering = parseFloat(document.getElementById('beratKering').value) || 0;
             let bBasah = parseFloat(document.getElementById('beratBasah').value) || 0;
@@ -237,35 +276,72 @@
             let edemaVal = parseFloat(document.getElementById('edemaLevel').value) || 0;
             let intakeVal = inputIntake === "" ? 0 : parseFloat(inputIntake);
             
+            // Ambil Profil
+            let usia = parseInt(document.getElementById('usia').value) || 50;
+            let gender = document.getElementById('gender').value;
+            let akses = document.getElementById('akses').value; 
+
             let idwg = bBasah - bKering;
             if(idwg < 0) idwg = 0;
             
             let totalUF = idwg + intakeVal + edemaVal;
 
-            // Update Input UF (Hanya value-nya, user bisa edit manual setelah ini)
-            // Kita gunakan cek sederhana: Jika input UF kosong atau user sedang tidak mengetik di UF, update.
-            // Agar simple: Kita update saja, kalau user mau edit manual, mereka edit setelah input BB.
+            // Update UF Input (Jika user belum edit)
             document.getElementById('valUF').value = totalUF.toFixed(2);
+
+            // --- LOGIKA SARAN ---
+            
+            // 1. LOGIKA WAKTU (MAX 5 JAM)
+            let speedFactor = 13; 
+            if(usia > 60) speedFactor = 10; // Lansia aman
+            if(gender === 'wanita') speedFactor -= 1; 
+
+            let maxUFR = (bKering * speedFactor) / 1000; 
+            let calculatedJam = (maxUFR > 0) ? totalUF / maxUFR : 0;
+            let finalJam = calculatedJam;
+            
+            if(finalJam < 4.0) finalJam = 4.0;
+            if(finalJam > 5.0) finalJam = 5.0;
+
+            // 2. LOGIKA Qb
+            let targetQb = bKering * 4;
+            if(akses === 'cdl') { if(targetQb > 230) targetQb = 230; }
+            if(usia > 70) { if(targetQb > 250) targetQb = 250; }
+            targetQb = Math.floor(targetQb / 10) * 10;
+            if(targetQb < 150) targetQb = 150;
+
+            // Render Info Saran
+            document.getElementById('saranJam').innerText = finalJam.toFixed(1);
+            document.getElementById('saranQb').innerText = targetQb;
+            document.getElementById('aksesNote').innerText = (akses === 'cdl') ? "Limit CDL" : "Cimino";
+
+            // Speed Warning
+            let realSpeed = (finalJam > 0) ? (totalUF / finalJam).toFixed(2) : 0;
+            let noteElement = document.getElementById('saranNote');
+            if(realSpeed > 0.85) {
+                noteElement.innerText = `⚠️ ${realSpeed} L/j (Cepat)`;
+                noteElement.classList.add('text-red-500', 'font-bold');
+            } else {
+                noteElement.innerText = `${realSpeed} L/j (Aman)`;
+                noteElement.classList.remove('text-red-500', 'font-bold');
+            }
         };
 
-        // --- CEK DATA SAAT GANTI TANGGAL ---
+        // --- CEK DATA ---
         window.cekDataTanggalIni = () => {
             const tglPilihan = document.getElementById('tanggal').value;
-            
-            // Cari di cache apakah tanggal ini ada datanya?
             const dataAda = historyCache.find(item => item.date === tglPilihan);
             
             if(dataAda) {
-                // ISI FORM DENGAN DATA LAMA (MODE EDIT)
                 document.getElementById('docId').value = dataAda.id;
                 document.getElementById('beratKering').value = dataAda.bk;
                 document.getElementById('beratBasah').value = dataAda.bb;
                 document.getElementById('intake').value = dataAda.intake;
-                document.getElementById('valUF').value = dataAda.uf; // Load manual UF yang tersimpan
+                document.getElementById('valUF').value = dataAda.uf;
                 document.getElementById('edemaLevel').value = dataAda.edema_level || 0;
                 updateDeskripsiEdema();
 
-                // Vital Signs
+                // Vitals
                 document.getElementById('tensiPre').value = dataAda.tensi_pre || "";
                 document.getElementById('nadiPre').value = dataAda.nadi_pre || "";
                 
@@ -274,42 +350,37 @@
                 document.getElementById('tensiPost').value = dataAda.tensi_post || "";
                 document.getElementById('nadiPost').value = dataAda.nadi_post || "";
 
-                // Ubah Tombol
-                document.getElementById('btnText').innerText = "Update Data Tanggal Ini";
+                document.getElementById('btnText').innerText = "Update Data";
                 document.getElementById('btnSimpan').classList.replace('bg-teal-600', 'bg-blue-600');
+                
+                // Trigger hitung untuk refresh saran waktu/qb
+                hitungOtomatis();
             } else {
-                // RESET FORM (MODE BARU)
                 document.getElementById('docId').value = "";
-                // Jangan reset Berat Kering, biarkan dari data terakhir untuk kemudahan
                 document.getElementById('beratBasah').value = "";
                 document.getElementById('intake').value = "";
                 document.getElementById('valUF').value = "0.00";
                 document.getElementById('edemaLevel').value = 0;
                 updateDeskripsiEdema();
                 
-                // Reset Vitals
                 document.getElementById('tensiPre').value = "";
                 document.getElementById('nadiPre').value = "";
                 document.getElementById('beratSesudah').value = "";
                 document.getElementById('tensiPost').value = "";
                 document.getElementById('nadiPost').value = "";
 
-                document.getElementById('btnText').innerText = "Simpan Data Baru";
+                document.getElementById('btnText').innerText = "Simpan Baru";
                 document.getElementById('btnSimpan').classList.replace('bg-blue-600', 'bg-teal-600');
             }
         }
 
-        // --- DATABASE LOAD ---
         async function loadDataCloud() {
             if(!currentUser) return;
-
-            // Query: Ambil semua data user, urutkan tanggal descending (terbaru di atas)
-            // NOTE: Jika error "Index", cek console browser!
             const q = query(collection(db, "riwayat_hd"), where("uid", "==", currentUser.uid), orderBy("date", "desc"));
 
             try {
                 const querySnapshot = await getDocs(q);
-                historyCache = []; // Reset cache
+                historyCache = [];
                 const tbody = document.getElementById('historyTableBody');
                 tbody.innerHTML = '';
 
@@ -318,10 +389,7 @@
                     item.id = docSnap.id;
                     historyCache.push(item);
 
-                    // Render Tabel
                     let displayBBSesudah = item.bb_sesudah ? `<strong>${item.bb_sesudah}</strong>` : '-';
-                    let displayTensi = item.tensi_pre ? `<div class="text-[9px]">${item.tensi_pre}</div>` : '-';
-                    
                     let row = `
                         <tr class="bg-white border-b hover:bg-slate-50 transition">
                             <td class="px-2 py-3 text-xs text-slate-500">${item.date.split('-')[2]}/${item.date.split('-')[1]}</td>
@@ -332,20 +400,20 @@
                     `;
                     tbody.insertAdjacentHTML('beforeend', row);
                 });
-
-                // Setelah data dimuat, cek form
-                cekDataTanggalIni();
                 
-                // Update Grafik (Balik array agar grafik dari kiri(lama) ke kanan(baru))
+                if(historyCache.length > 0 && !document.getElementById('beratKering').value) {
+                    // Jika form kosong, ambil BK terakhir
+                     document.getElementById('beratKering').value = historyCache[0].bk;
+                }
+
+                cekDataTanggalIni();
                 updateChartCloud([...historyCache].reverse());
 
             } catch (error) {
                 console.error("Error Load Data:", error);
-                alert("Gagal memuat data. Jika ini pertama kali, cek Console Browser untuk link Index Firestore.");
             }
         }
 
-        // --- SIMPAN DATA ---
         window.simpanKeCloud = async (e) => {
             e.preventDefault();
             if(!currentUser) return alert("Silahkan login ulang.");
@@ -360,23 +428,14 @@
                 date: document.getElementById('tanggal').value,
                 bk: parseFloat(document.getElementById('beratKering').value),
                 bb: parseFloat(document.getElementById('beratBasah').value),
-                
-                // Vitals Pre
                 tensi_pre: document.getElementById('tensiPre').value,
                 nadi_pre: document.getElementById('nadiPre').value,
-                
-                // Faktor Hitung
                 intake: parseFloat(document.getElementById('intake').value) || 0,
                 edema_level: parseFloat(document.getElementById('edemaLevel').value) || 0,
-                
-                // Hasil (Manual/Auto)
                 uf: document.getElementById('valUF').value, 
-
-                // Post Data (Bisa Null)
                 bb_sesudah: document.getElementById('beratSesudah').value ? parseFloat(document.getElementById('beratSesudah').value) : null,
                 tensi_post: document.getElementById('tensiPost').value,
                 nadi_post: document.getElementById('nadiPost').value,
-
                 timestamp: new Date()
             };
 
@@ -384,31 +443,26 @@
 
             try {
                 if (docId) {
-                    // UPDATE
                     await updateDoc(doc(db, "riwayat_hd", docId), dataPayload);
-                    alert("Data Berhasil Diupdate!");
+                    alert("Update Berhasil!");
                 } else {
-                    // BARU
                     await addDoc(collection(db, "riwayat_hd"), dataPayload);
-                    alert("Data Baru Tersimpan!");
+                    alert("Data Tersimpan!");
                 }
                 await loadDataCloud();
             } catch (error) {
                 console.error(error);
-                alert("Gagal menyimpan: " + error.message);
+                alert("Gagal: " + error.message);
             } finally {
                 btnText.innerText = "Simpan Data";
                 btn.disabled = false;
             }
         };
 
-        // --- CHART JS ---
         let myChart = null;
         function updateChartCloud(data) {
             const ctx = document.getElementById('hdChart').getContext('2d');
             if (myChart) myChart.destroy();
-            
-            // Ambil 7 data terakhir saja
             const recentData = data.slice(-7);
 
             myChart = new Chart(ctx, {
