@@ -15,20 +15,22 @@
         input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         input[type=number] { -moz-appearance: textfield; }
         .loader { border-top-color: #0d9488; -webkit-animation: spinner 1.5s linear infinite; animation: spinner 1.5s linear infinite; }
-        @keyframes spinner { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body class="text-slate-700 select-none bg-slate-50">
 
     <div id="loginPage" class="min-h-screen flex flex-col justify-center items-center p-6 bg-gradient-to-br from-teal-600 to-teal-800 hidden">
         <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-sm text-center backdrop-blur-sm bg-white/95">
-            <div class="bg-teal-50 w-28 h-28 rounded-full flex items-center justify-center mx-auto mb-5 shadow-inner border-4 border-white p-4">
-                <svg class="w-full h-full text-teal-600 drop-shadow-sm" fill="currentColor" viewBox="0 0 512 512">
-                    <path d="M160 96c-55.2 0-102.8 32.4-126.3 80.6C9.9 225.1 0 267.7 0 304c0 88.4 71.6 160 160 160c66 0 122.8-40.1 147.3-97.8c-14.5-21.6-23.3-47.6-23.3-75.7c0-10.7 1.3-21.1 3.7-31c-13.6-6.1-28.6-9.5-44.4-9.5H240c-22.1 0-40-17.9-40-40V176c0-16.2 9.2-30.2 22.8-37.2c-18.6-27-49.3-42.8-82.8-42.8zM352 32c-66 0-122.8 40.1-147.3 97.8c14.5 21.6 23.3 47.6 23.3 75.7c0 10.7-1.3 21.1-3.7 31c13.6 6.1 28.6 9.5 44.4 9.5h3.3c22.1 0 40 17.9 40 40v34c0 16.2-9.2 30.2-22.8 37.2c18.6 27 49.3 42.8 82.8 42.8c55.2 0 102.8-32.4 126.3-80.6C502.1 286.9 512 244.3 512 208c0-88.4-71.6-160-160-160z"/>
+            
+            <div class="bg-teal-50 w-32 h-32 rounded-full flex items-center justify-center mx-auto mb-5 shadow-inner border-4 border-white p-4">
+                <svg class="w-20 h-20 text-teal-600" fill="currentColor" viewBox="0 0 640 512">
+                    <path d="M96 64c0-17.7 14.3-32 32-32h32c17.7 0 32 14.3 32 32V224v64V448c0 17.7-14.3 32-32 32H128c-17.7 0-32-14.3-32-32V288H64c-17.7 0-32-14.3-32-32V128c0-17.7 14.3-32 32-32H96V64zM224 256c0-17.7 14.3-32 32-32h32 32 32c17.7 0 32 14.3 32 32v64c0 17.7-14.3 32-32 32H320 288 256c-17.7 0-32-14.3-32-32V256zM64 96v32c0 17.7 14.3 32 32 32h32V96H64zm64 128H96v32c0 17.7 14.3 32 32 32h32v-32-32zM448 96H576c17.7 0 32 14.3 32 32V448c0 17.7-14.3 32-32 32H448c-17.7 0-32-14.3-32-32V128c0-17.7 14.3-32 32-32zM544 320v64h32V320H544zM544 160v96h32V160H544zM480 256h32v-32H480v32zm0 64h32v-32H480v32z"/>
                 </svg>
             </div>
+
             <h1 class="text-4xl font-black text-slate-800 tracking-tight mb-1">Hemocare</h1>
             <p class="text-sm font-bold text-teal-600 uppercase tracking-widest mb-8">Jurnal Pasien Dialisis</p>
+            
             <button onclick="loginGoogle()" class="w-full bg-white border-2 border-slate-200 hover:border-teal-500 hover:bg-teal-50 text-slate-700 font-bold py-4 px-4 rounded-2xl shadow-sm flex items-center justify-center transition-all duration-300 group">
                 <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-6 h-6 mr-3 group-hover:scale-110 transition">
                 Masuk dengan Google
@@ -91,7 +93,7 @@
                                 </div>
                             </div>
                             <div class="w-1/2">
-                                <label class="text-[11px] font-bold text-slate-500 uppercase ml-1">Berat Basah Datang</label>
+                                <label class="text-[11px] font-bold text-slate-500 uppercase ml-1">Berat Basah (Datang)</label>
                                 <div class="relative mt-1">
                                     <input type="number" step="0.01" id="beratBasah" class="w-full bg-white border-2 border-orange-400 rounded-2xl p-3 text-center font-black text-orange-600 text-xl outline-none focus:ring-2 focus:ring-orange-200 transition" required oninput="hitungOtomatis()">
                                     <span class="absolute right-3 top-4 text-xs font-bold text-orange-300">Kg</span>
@@ -114,10 +116,11 @@
 
                     <div class="mb-6 bg-slate-50 p-4 rounded-3xl border border-slate-200">
                          <h3 class="text-xs font-bold text-slate-600 uppercase mb-3 flex items-center"><span class="bg-slate-200 p-1 rounded-md mr-2"><i class="fas fa-calculator"></i></span> Target & Parameter</h3>
+                        
                         <div class="grid grid-cols-2 gap-3 mb-4">
                             <div>
                                 <label class="text-[10px] font-bold text-slate-500 uppercase ml-1">Status Edema</label>
-                                <select id="edemaLevel" class="w-full mt-1 bg-white border border-yellow-400 text-yellow-800 text-sm rounded-xl p-2.5 font-bold outline-none focus:ring-2 focus:ring-yellow-200" onchange="hitungOtomatis()">
+                                <select id="edemaLevel" class="w-full mt-1 bg-white border border-yellow-400 text-yellow-800 text-sm rounded-xl p-2.5 font-bold outline-none focus:ring-2 focus:ring-yellow-200" onchange="updateDeskripsiEdema(); hitungOtomatis()">
                                     <option value="0">Normal</option>
                                     <option value="0.25">Ringan (+0.25)</option>
                                     <option value="0.5">Sedang (+0.5)</option>
@@ -129,6 +132,14 @@
                                  <input type="number" step="0.1" id="intake" class="w-full mt-1 bg-white border border-blue-300 rounded-xl p-2.5 text-sm font-bold text-blue-700 outline-none focus:ring-2 focus:ring-blue-200" placeholder="0.0" oninput="hitungOtomatis()">
                              </div>
                         </div>
+
+                        <div id="edemaContainer" class="mb-4 hidden">
+                            <p id="edemaDesc" class="text-[10px] text-yellow-800 italic bg-yellow-50 p-2 rounded-xl border border-yellow-200 flex items-start">
+                                <i class="fas fa-info-circle mr-1.5 mt-0.5 text-yellow-600"></i>
+                                <span></span>
+                            </p>
+                        </div>
+
                         <div class="flex space-x-3 items-stretch mb-4">
                              <div class="w-1/2 bg-teal-700 rounded-2xl p-3 text-center text-white shadow-lg flex flex-col justify-center">
                                 <p class="text-[10px] font-bold uppercase opacity-70 mb-1">UF Goal (Target)</p>
@@ -245,31 +256,19 @@
         let currentUser = null;
         let historyCache = [];
 
-        // --- HELPER: FORMAT HARI & TANGGAL ---
         function formatTglLengkap(dateString) {
             if (!dateString) return '-';
             const date = new Date(dateString);
-            // Array hari & bulan manual untuk menghindari masalah locale browser tertentu
             const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
             const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-            
-            const dayName = days[date.getDay()];
-            const dayNum = date.getDate();
-            const monthName = months[date.getMonth()];
-            const year = date.getFullYear();
-            
-            return `${dayName}, ${dayNum} ${monthName} ${year}`;
+            return `${days[date.getDay()]}, ${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
         }
 
         function formatTglSingkat(dateString) {
             if (!dateString) return '-';
             const date = new Date(dateString);
             const days = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
-            const dayName = days[date.getDay()];
-            const dayNum = date.getDate();
-            const monthNum = date.getMonth() + 1;
-            
-            return `<span class="font-bold text-teal-700">${dayName}</span><br><span class="text-[10px] opacity-70">${dayNum}/${monthNum}</span>`;
+            return `<span class="font-bold text-teal-700">${days[date.getDay()]}</span><br><span class="text-[10px] opacity-70">${date.getDate()}/${date.getMonth() + 1}</span>`;
         }
 
         window.loginGoogle = () => signInWithPopup(auth, provider).catch(e => alert("Login Gagal: " + e.message));
@@ -281,12 +280,9 @@
                 document.getElementById('loginPage').classList.add('hidden');
                 document.getElementById('mainApp').classList.remove('hidden');
                 document.getElementById('userName').innerText = user.displayName.split(" ")[0];
-                
                 const today = new Date();
                 const offset = today.getTimezoneOffset() * 60000;
-                const localISOTime = new Date(today.getTime() - offset).toISOString().slice(0, 10);
-                document.getElementById('tanggal').value = localISOTime;
-
+                document.getElementById('tanggal').value = new Date(today.getTime() - offset).toISOString().slice(0, 10);
                 loadProfilLokal();
                 loadDataCloud();
             } else {
@@ -310,6 +306,24 @@
             if(g) document.getElementById('gender').value = g;
             if(a) document.getElementById('akses').value = a;
         };
+
+        window.updateDeskripsiEdema = () => {
+            const val = parseFloat(document.getElementById('edemaLevel').value);
+            const container = document.getElementById('edemaContainer');
+            const descText = document.getElementById('edemaDesc').querySelector('span');
+            
+            container.classList.remove('hidden');
+            
+            if(val === 0) {
+                descText.innerText = "Kondisi normal, tidak ada penumpukan cairan terlihat.";
+            } else if(val === 0.25) {
+                descText.innerText = "RINGAN: Bengkak sedikit di punggung kaki/mata kaki (Pitting +1).";
+            } else if(val === 0.5) {
+                descText.innerText = "SEDANG: Bengkak terlihat jelas sampai betis (Pitting +2).";
+            } else if(val === 1.0) {
+                descText.innerText = "BERAT: Bengkak meluas sampai paha/perut (Anasarka).";
+            }
+        }
 
         window.updateQbAndSpeed = () => {
             const bk = parseFloat(document.getElementById('beratKering').value) || 0;
@@ -384,11 +398,8 @@
             updateQbAndSpeed();
         };
 
-        // --- UPDATE TANGGAL HARI INI (ATAS) ---
         window.cekDataTanggalIni = () => {
             const tglPilihan = document.getElementById('tanggal').value;
-            
-            // Update Teks Hari di Atas
             document.getElementById('tglHariIni').innerText = formatTglLengkap(tglPilihan);
 
             const dataAda = historyCache.find(item => item.date === tglPilihan);
@@ -402,6 +413,7 @@
                 document.getElementById('intake').value = dataAda.intake;
                 document.getElementById('valUF').value = dataAda.uf;
                 document.getElementById('edemaLevel').value = dataAda.edema_level || 0;
+                updateDeskripsiEdema(); 
                 document.getElementById('catatan').value = dataAda.catatan || "";
                 if(dataAda.waktu_hd) document.getElementById('saranJam').value = dataAda.waktu_hd;
                 document.getElementById('tensiPre').value = dataAda.tensi_pre || "";
@@ -425,6 +437,7 @@
                 document.getElementById('intake').value = "";
                 document.getElementById('valUF').value = "0.00";
                 document.getElementById('edemaLevel').value = 0;
+                updateDeskripsiEdema();
                 document.getElementById('catatan').value = "";
                 document.getElementById('saranJam').value = "4.0";
                 document.getElementById('tensiPre').value = "";
@@ -457,9 +470,11 @@
                     historyCache.push(item);
 
                     let displayBBSesudah = item.bb_sesudah ? `<strong class="text-sm">${item.bb_sesudah}</strong>` : '<span class="text-slate-300">-</span>';
-                    let edemaBadge = item.edema_level > 0 ? `<span class="text-[9px] bg-yellow-100 text-yellow-800 px-1.5 py-0.5 rounded-full font-bold ml-1">+${item.edema_level}</span>` : '';
-                    
-                    // UPDATE: GUNAKAN FORMAT HARI SINGKAT
+                    let edemaBadge = '';
+                    if(item.edema_level == 0.25) edemaBadge = `<span class="text-[8px] bg-yellow-100 text-yellow-700 border border-yellow-200 px-1.5 py-0.5 rounded-full ml-1">Ringan</span>`;
+                    else if(item.edema_level == 0.5) edemaBadge = `<span class="text-[8px] bg-orange-100 text-orange-700 border border-orange-200 px-1.5 py-0.5 rounded-full ml-1">Sedang</span>`;
+                    else if(item.edema_level == 1.0) edemaBadge = `<span class="text-[8px] bg-red-100 text-red-700 border border-red-200 px-1.5 py-0.5 rounded-full ml-1">Berat</span>`;
+
                     let formattedDate = formatTglSingkat(item.date);
 
                     let displayPre = `
@@ -467,7 +482,6 @@
                         <div class="text-[10px] text-slate-500 mt-0.5 flex items-center">
                             <i class="fas fa-heartbeat mr-1 text-orange-300"></i> ${item.tensi_pre || '-'}
                         </div>
-                        ${item.nadi_pre ? `<div class="text-[10px] text-slate-400 ml-4">${item.nadi_pre} bpm</div>` : ''}
                     `;
 
                     let displayPost = `
@@ -475,7 +489,6 @@
                         <div class="text-[10px] text-slate-500 mt-0.5 flex items-center">
                             <i class="fas fa-heartbeat mr-1 text-green-300"></i> ${item.tensi_post || '-'}
                         </div>
-                        ${item.nadi_post ? `<div class="text-[10px] text-slate-400 ml-4">${item.nadi_post} bpm</div>` : ''}
                     `;
                     
                     let noteDisplay = '';
