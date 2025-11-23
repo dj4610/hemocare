@@ -16,9 +16,25 @@
         input[type=number] { -moz-appearance: textfield; }
         .loader { border-top-color: #0d9488; -webkit-animation: spinner 1.5s linear infinite; animation: spinner 1.5s linear infinite; }
         
-        /* Animasi Halus */
         .fade-in { animation: fadeIn 0.5s ease-in; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Style untuk Pagination */
+        .pagination-btn {
+            padding: 0.5rem 0.8rem;
+            margin: 0 0.1rem;
+            border-radius: 0.5rem;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: #64748b;
+            background: white;
+            border: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .pagination-btn:hover { background-color: #f1f5f9; color: #0f172a; }
+        .pagination-btn.active { background-color: #0d9488; color: white; border-color: #0d9488; }
+        .pagination-btn:disabled { opacity: 0.5; cursor: not-allowed; }
     </style>
 </head>
 <body class="text-slate-700 select-none bg-slate-50">
@@ -46,7 +62,7 @@
         <p class="text-teal-100/60 text-xs mt-8">©2025 Inferno</p>
     </div>
 
-    <div id="mainApp" class="hidden min-h-screen flex flex-col max-w-md mx-auto bg-white shadow-xl fade-in">
+    <div id="mainApp" class="hidden min-h-screen flex flex-col max-w-md mx-auto bg-white shadow-xl fade-in relative">
         
         <div class="bg-teal-600 text-white p-5 rounded-b-3xl shadow-md sticky top-0 z-50 flex justify-between items-center">
             <div>
@@ -60,7 +76,7 @@
             </button>
         </div>
 
-        <div class="flex-grow px-4 py-6 pb-24 overflow-y-auto">
+        <div class="flex-grow px-4 py-6 pb-10 overflow-y-auto">
 
             <div class="bg-white p-5 rounded-3xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.1)] mb-6 border border-slate-100">
                 
@@ -227,7 +243,7 @@
                 </div>
             </div>
 
-            <div class="bg-white p-5 rounded-3xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.1)] mb-10 border border-slate-100">
+            <div class="bg-white p-5 rounded-3xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.1)] mb-4 border border-slate-100">
                 <h2 class="text-sm font-black text-slate-700 uppercase mb-4 tracking-wider flex items-center"><i class="fas fa-history mr-2 text-teal-500"></i> Riwayat Terakhir</h2>
                 <div class="overflow-x-auto rounded-xl border border-slate-100">
                     <table class="w-full text-sm text-left text-slate-500">
@@ -242,7 +258,15 @@
                         <tbody id="historyTableBody" class="divide-y divide-slate-50"></tbody>
                     </table>
                 </div>
+
+                <div id="paginationContainer" class="flex justify-center items-center mt-5 space-x-1">
+                    </div>
             </div>
+
+            <div class="text-center pb-6 mt-8">
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest opacity-60">copyright 2025 by Inferno</p>
+            </div>
+
         </div>
     </div>
 
@@ -266,6 +290,10 @@
         const provider = new GoogleAuthProvider();
         let currentUser = null;
         let historyCache = [];
+        
+        // --- KONFIGURASI PAGINATION ---
+        const ITEMS_PER_PAGE = 5; // Menampilkan 5 data per halaman
+        let currentPage = 1;
 
         function formatTglLengkap(dateString) {
             if (!dateString) return '-';
@@ -472,71 +500,17 @@
             try {
                 const querySnapshot = await getDocs(q);
                 historyCache = [];
-                const tbody = document.getElementById('historyTableBody');
-                tbody.innerHTML = '';
-
+                
                 querySnapshot.forEach((docSnap) => {
                     const item = docSnap.data();
                     item.id = docSnap.id;
                     historyCache.push(item);
-
-                    let displayBBSesudah = item.bb_sesudah ? `<strong class="text-sm">${item.bb_sesudah}</strong>` : '<span class="text-slate-300">-</span>';
-                    
-                    let edemaBadge = '';
-                    if(item.edema_level == 0) {
-                         edemaBadge = `<span class="text-[8px] bg-emerald-100 text-emerald-700 border border-emerald-200 px-1.5 py-0.5 rounded-full ml-1">Normal</span>`;
-                    } else if(item.edema_level == 0.25) {
-                         edemaBadge = `<span class="text-[8px] bg-yellow-100 text-yellow-800 border border-yellow-200 px-1.5 py-0.5 rounded-full ml-1">Edema Ringan</span>`;
-                    } else if(item.edema_level == 0.5) {
-                         edemaBadge = `<span class="text-[8px] bg-orange-100 text-orange-700 border border-orange-200 px-1.5 py-0.5 rounded-full ml-1">Edema Sedang</span>`;
-                    } else if(item.edema_level == 1.0) {
-                         edemaBadge = `<span class="text-[8px] bg-red-100 text-red-700 border border-red-200 px-1.5 py-0.5 rounded-full ml-1">Edema Berat</span>`;
-                    }
-
-                    let formattedDate = formatTglSingkat(item.date);
-
-                    let displayPre = `
-                        <div class="font-black text-sm text-orange-600">${item.bb}</div>
-                        <div class="text-[10px] text-slate-500 mt-0.5 flex items-center">
-                            <i class="fas fa-heartbeat mr-1 text-orange-300"></i> ${item.tensi_pre || '-'}
-                        </div>
-                    `;
-
-                    let displayPost = `
-                        <div class="font-black text-sm text-green-600">${displayBBSesudah}</div>
-                        <div class="text-[10px] text-slate-500 mt-0.5 flex items-center">
-                            <i class="fas fa-heartbeat mr-1 text-green-300"></i> ${item.tensi_post || '-'}
-                        </div>
-                    `;
-                    
-                    let noteDisplay = '';
-                    if (item.catatan) {
-                        noteDisplay = `
-                        <tr class="bg-yellow-50/40 border-b border-slate-50">
-                            <td colspan="4" class="px-3 py-2">
-                                <div class="flex items-start text-[11px] text-slate-600 italic bg-white/50 p-2 rounded-lg border-l-2 border-yellow-400">
-                                    <i class="fas fa-sticky-note text-yellow-500 mr-2 mt-0.5"></i> 
-                                    <span>"${item.catatan}"</span>
-                                </div>
-                            </td>
-                        </tr>`;
-                    }
-
-                    let row = `
-                        <tr class="bg-white hover:bg-slate-50 transition border-b border-slate-100">
-                            <td class="px-3 py-3 text-xs text-slate-600 leading-tight">
-                                ${formattedDate}
-                                <div class="mt-1">${edemaBadge}</div>
-                            </td>
-                            <td class="px-2 py-3 align-top bg-orange-50/30">${displayPre}</td>
-                            <td class="px-2 py-3 align-top bg-green-50/30">${displayPost}</td>
-                            <td class="px-3 py-3 font-black text-slate-700 text-right text-base align-top">${item.uf}<span class="text-xs font-bold text-slate-400 ml-0.5">L</span></td>
-                        </tr>
-                        ${noteDisplay}
-                    `;
-                    tbody.insertAdjacentHTML('beforeend', row);
                 });
                 
+                // Setelah data diload, tampilkan halaman pertama dan chart
+                currentPage = 1;
+                renderPage(currentPage);
+                renderPaginationButtons();
                 cekDataTanggalIni();
                 updateChartCloud([...historyCache].reverse());
 
@@ -547,6 +521,154 @@
                 }
             }
         }
+
+        // --- FUNGSI BARU: RENDER HALAMAN ---
+        window.renderPage = (page) => {
+            const tbody = document.getElementById('historyTableBody');
+            tbody.innerHTML = '';
+
+            const start = (page - 1) * ITEMS_PER_PAGE;
+            const end = start + ITEMS_PER_PAGE;
+            const paginatedItems = historyCache.slice(start, end);
+
+            if(paginatedItems.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-xs text-slate-400">Belum ada data</td></tr>';
+                return;
+            }
+
+            paginatedItems.forEach(item => {
+                let displayBBSesudah = item.bb_sesudah ? `<strong class="text-sm">${item.bb_sesudah}</strong>` : '<span class="text-slate-300">-</span>';
+                
+                let edemaBadge = '';
+                if(item.edema_level == 0) {
+                        edemaBadge = `<span class="text-[8px] bg-emerald-100 text-emerald-700 border border-emerald-200 px-1.5 py-0.5 rounded-full ml-1">Normal</span>`;
+                } else if(item.edema_level == 0.25) {
+                        edemaBadge = `<span class="text-[8px] bg-yellow-100 text-yellow-800 border border-yellow-200 px-1.5 py-0.5 rounded-full ml-1">Edema Ringan</span>`;
+                } else if(item.edema_level == 0.5) {
+                        edemaBadge = `<span class="text-[8px] bg-orange-100 text-orange-700 border border-orange-200 px-1.5 py-0.5 rounded-full ml-1">Edema Sedang</span>`;
+                } else if(item.edema_level == 1.0) {
+                        edemaBadge = `<span class="text-[8px] bg-red-100 text-red-700 border border-red-200 px-1.5 py-0.5 rounded-full ml-1">Edema Berat</span>`;
+                }
+
+                let formattedDate = formatTglSingkat(item.date);
+
+                let displayPre = `
+                    <div class="font-black text-sm text-orange-600">${item.bb}</div>
+                    <div class="text-[10px] text-slate-500 mt-0.5 flex items-center">
+                        <i class="fas fa-heartbeat mr-1 text-orange-300"></i> ${item.tensi_pre || '-'}
+                    </div>
+                `;
+
+                let displayPost = `
+                    <div class="font-black text-sm text-green-600">${displayBBSesudah}</div>
+                    <div class="text-[10px] text-slate-500 mt-0.5 flex items-center">
+                        <i class="fas fa-heartbeat mr-1 text-green-300"></i> ${item.tensi_post || '-'}
+                    </div>
+                `;
+                
+                let noteDisplay = '';
+                if (item.catatan) {
+                    noteDisplay = `
+                    <tr class="bg-yellow-50/40 border-b border-slate-50">
+                        <td colspan="4" class="px-3 py-2">
+                            <div class="flex items-start text-[11px] text-slate-600 italic bg-white/50 p-2 rounded-lg border-l-2 border-yellow-400">
+                                <i class="fas fa-sticky-note text-yellow-500 mr-2 mt-0.5"></i> 
+                                <span>"${item.catatan}"</span>
+                            </div>
+                        </td>
+                    </tr>`;
+                }
+
+                let row = `
+                    <tr class="bg-white hover:bg-slate-50 transition border-b border-slate-100">
+                        <td class="px-3 py-3 text-xs text-slate-600 leading-tight">
+                            ${formattedDate}
+                            <div class="mt-1">${edemaBadge}</div>
+                        </td>
+                        <td class="px-2 py-3 align-top bg-orange-50/30">${displayPre}</td>
+                        <td class="px-2 py-3 align-top bg-green-50/30">${displayPost}</td>
+                        <td class="px-3 py-3 font-black text-slate-700 text-right text-base align-top">${item.uf}<span class="text-xs font-bold text-slate-400 ml-0.5">L</span></td>
+                    </tr>
+                    ${noteDisplay}
+                `;
+                tbody.insertAdjacentHTML('beforeend', row);
+            });
+        }
+
+        // --- FUNGSI BARU: BUAT TOMBOL PAGINATION ---
+        window.renderPaginationButtons = () => {
+            const container = document.getElementById('paginationContainer');
+            container.innerHTML = '';
+            
+            const totalPages = Math.ceil(historyCache.length / ITEMS_PER_PAGE);
+            if(totalPages <= 1) return;
+
+            // Tombol Previous
+            const prevBtn = document.createElement('button');
+            prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+            prevBtn.className = 'pagination-btn';
+            prevBtn.disabled = currentPage === 1;
+            prevBtn.onclick = () => { if(currentPage > 1) changePage(currentPage - 1); };
+            container.appendChild(prevBtn);
+
+            // Logika menampilkan nomor halaman (Smart Pagination: 1, 2, 3 ... 10)
+            const maxVisibleButtons = 5;
+            let startPage = Math.max(1, currentPage - Math.floor(maxVisibleButtons / 2));
+            let endPage = Math.min(totalPages, startPage + maxVisibleButtons - 1);
+
+            if (endPage - startPage + 1 < maxVisibleButtons) {
+                startPage = Math.max(1, endPage - maxVisibleButtons + 1);
+            }
+
+            // Halaman Pertama selalu muncul jika jauh
+            if (startPage > 1) {
+                createPageButton(1, container);
+                if (startPage > 2) {
+                    const dots = document.createElement('span');
+                    dots.innerText = '...';
+                    dots.className = 'text-xs text-slate-400 mx-1';
+                    container.appendChild(dots);
+                }
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                createPageButton(i, container);
+            }
+
+            // Halaman Terakhir selalu muncul jika jauh
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    const dots = document.createElement('span');
+                    dots.innerText = '...';
+                    dots.className = 'text-xs text-slate-400 mx-1';
+                    container.appendChild(dots);
+                }
+                createPageButton(totalPages, container);
+            }
+
+            // Tombol Next
+            const nextBtn = document.createElement('button');
+            nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+            nextBtn.className = 'pagination-btn';
+            nextBtn.disabled = currentPage === totalPages;
+            nextBtn.onclick = () => { if(currentPage < totalPages) changePage(currentPage + 1); };
+            container.appendChild(nextBtn);
+        };
+
+        function createPageButton(pageNum, container) {
+            const btn = document.createElement('button');
+            btn.innerText = pageNum;
+            btn.className = `pagination-btn ${currentPage === pageNum ? 'active' : ''}`;
+            btn.onclick = () => changePage(pageNum);
+            container.appendChild(btn);
+        }
+
+        function changePage(pageNum) {
+            currentPage = pageNum;
+            renderPage(currentPage);
+            renderPaginationButtons();
+        }
+        // ---------------------------------------------
 
         window.simpanKeCloud = async (e) => {
             e.preventDefault();
