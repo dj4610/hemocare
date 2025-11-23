@@ -34,7 +34,7 @@
                 Masuk dengan Google
             </button>
         </div>
-        <p class="text-teal-100/60 text-xs mt-8">© 2023 Inferno-X Technology</p>
+        <p class="text-teal-100/60 text-xs mt-8">©2025 Inferno-X </p>
     </div>
 
     <div id="mainApp" class="hidden min-h-screen flex flex-col max-w-md mx-auto bg-white shadow-xl">
@@ -86,14 +86,14 @@
                         <h3 class="text-xs font-bold text-orange-600 uppercase mb-3 flex items-center"><span class="bg-orange-100 p-1 rounded-md mr-2"><i class="fas fa-hourglass-start"></i></span> Pre-HD (Awal)</h3>
                         <div class="flex space-x-4 mb-4">
                             <div class="w-1/2">
-                                <label class="text-[11px] font-bold text-slate-500 uppercase ml-1">BK (Kering)</label>
+                                <label class="text-[11px] font-bold text-slate-500 uppercase ml-1">Berat Kering (Sebelumnya)</label>
                                 <div class="relative mt-1">
                                     <input type="number" step="0.01" id="beratKering" class="w-full bg-slate-100 border-2 border-slate-200 rounded-2xl p-3 text-center font-black text-slate-700 text-xl outline-none focus:border-teal-400 transition" required oninput="hitungOtomatis()">
                                     <span class="absolute right-3 top-4 text-xs font-bold text-slate-400">Kg</span>
                                 </div>
                             </div>
                             <div class="w-1/2">
-                                <label class="text-[11px] font-bold text-slate-500 uppercase ml-1">BB Datang</label>
+                                <label class="text-[11px] font-bold text-slate-500 uppercase ml-1">Berat Basah (Datang)</label>
                                 <div class="relative mt-1">
                                     <input type="number" step="0.01" id="beratBasah" class="w-full bg-white border-2 border-orange-400 rounded-2xl p-3 text-center font-black text-orange-600 text-xl outline-none focus:ring-2 focus:ring-orange-200 transition" required oninput="hitungOtomatis()">
                                     <span class="absolute right-3 top-4 text-xs font-bold text-orange-300">Kg</span>
@@ -240,6 +240,7 @@
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, updateDoc, doc, query, where, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+        // KONFIGURASI FIREBASE (PASTIKAN INI SESUAI MILIK ANDA)
         const firebaseConfig = {
             apiKey: "AIzaSyAvDP_wO_3GoP-dNIkYtJ9n7e69s_5EihQ",
             authDomain: "hemocare-8e0fa.firebaseapp.com",
@@ -307,7 +308,6 @@
             if(a) document.getElementById('akses').value = a;
         };
 
-        // --- PERBAIKAN DESKRIPSI EDEMA ---
         window.updateDeskripsiEdema = () => {
             const val = parseFloat(document.getElementById('edemaLevel').value);
             const container = document.getElementById('edemaContainer');
@@ -430,9 +430,9 @@
             } else {
                 document.getElementById('docId').value = "";
                 if(historyCache.length > 0) {
-                     document.getElementById('beratKering').value = historyCache[0].bk;
+                      document.getElementById('beratKering').value = historyCache[0].bk;
                 } else {
-                     document.getElementById('beratKering').value = "";
+                      document.getElementById('beratKering').value = "";
                 }
                 document.getElementById('beratBasah').value = "";
                 document.getElementById('intake').value = "";
@@ -472,11 +472,24 @@
 
                     let displayBBSesudah = item.bb_sesudah ? `<strong class="text-sm">${item.bb_sesudah}</strong>` : '<span class="text-slate-300">-</span>';
                     
-                    // --- STATUS EDEMA DI RIWAYAT ---
+                    // --- LOGIKA WARNA & TEXT EDEMA (DIPERBARUI) ---
                     let edemaLabel = '';
-                    if(item.edema_level == 0.25) edemaLabel = `<span class="text-[8px] bg-yellow-100 text-yellow-700 border border-yellow-200 px-1.5 py-0.5 rounded-full ml-1">Ringan</span>`;
-                    else if(item.edema_level == 0.5) edemaLabel = `<span class="text-[8px] bg-orange-100 text-orange-700 border border-orange-200 px-1.5 py-0.5 rounded-full ml-1">Sedang</span>`;
-                    else if(item.edema_level == 1.0) edemaLabel = `<span class="text-[8px] bg-red-100 text-red-700 border border-red-200 px-1.5 py-0.5 rounded-full ml-1">Berat</span>`;
+                    const edemaVal = parseFloat(item.edema_level);
+                    
+                    if (edemaVal === 0 || isNaN(edemaVal)) {
+                        // Hijau / Emerald untuk Normal
+                        edemaLabel = `<span class="text-[8px] bg-emerald-100 text-emerald-700 border border-emerald-200 px-1.5 py-0.5 rounded-full ml-1">Normal</span>`;
+                    } else if (edemaVal === 0.25) {
+                        // Kuning untuk Ringan
+                        edemaLabel = `<span class="text-[8px] bg-yellow-100 text-yellow-800 border border-yellow-200 px-1.5 py-0.5 rounded-full ml-1">Edema Ringan</span>`;
+                    } else if (edemaVal === 0.5) {
+                        // Oranye untuk Sedang
+                        edemaLabel = `<span class="text-[8px] bg-orange-100 text-orange-800 border border-orange-200 px-1.5 py-0.5 rounded-full ml-1">Edema Sedang</span>`;
+                    } else if (edemaVal >= 1.0) {
+                        // Merah / Rose untuk Berat
+                        edemaLabel = `<span class="text-[8px] bg-rose-100 text-rose-800 border border-rose-200 px-1.5 py-0.5 rounded-full ml-1">Edema Berat</span>`;
+                    }
+                    // -----------------------------------------------
 
                     let formattedDate = formatTglSingkat(item.date);
 
@@ -594,8 +607,8 @@
                 type: 'line',
                 data: {
                     labels: recentData.map(d => {
-                         let parts = d.date.split('-');
-                         return `${parts[2]}/${parts[1]}`; 
+                          let parts = d.date.split('-');
+                          return `${parts[2]}/${parts[1]}`; 
                     }),
                     datasets: [
                         {
