@@ -18,19 +18,17 @@
 <body class="text-slate-700 select-none">
 
     <div id="loginPage" class="h-screen flex flex-col justify-center items-center p-6 bg-gradient-to-b from-teal-600 to-teal-800 hidden">
-        <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-sm text-center transition transform hover:scale-105 duration-300">
+        <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-sm text-center">
             <div class="bg-teal-100 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-4 shadow-inner">
                 <i class="fas fa-heartbeat text-5xl text-teal-600"></i>
             </div>
             <h1 class="text-3xl font-black text-slate-800 tracking-tight">Hemocare</h1>
             <p class="text-xs font-bold text-teal-600 uppercase tracking-[0.3em] mb-6 border-b border-teal-100 pb-4 mx-10">by Inferno-X</p>
-            <p class="text-slate-500 mb-8 text-sm">Aplikasi pemantau HD & Cairan Tubuh</p>
             <button onclick="loginGoogle()" class="w-full bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold py-4 px-4 rounded-xl shadow-md flex items-center justify-center transition group">
-                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-6 h-6 mr-3 group-hover:scale-110 transition">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-6 h-6 mr-3">
                 Masuk dengan Google
             </button>
         </div>
-        <p class="text-teal-200 text-[10px] mt-8 opacity-60">Powered by Inferno-X</p>
     </div>
 
     <div id="mainApp" class="hidden min-h-screen flex flex-col">
@@ -53,35 +51,17 @@
 
             <div class="bg-white p-5 rounded-2xl shadow-md mb-6 border border-slate-100">
                 <div class="flex justify-between items-center border-b pb-3 mb-4">
-                    <h2 class="text-lg font-bold text-teal-700">Input Data Harian</h2>
-                    <span id="tglHariIni" class="text-xs bg-teal-100 text-teal-800 px-2 py-1 rounded-full font-bold"></span>
+                    <h2 class="text-lg font-bold text-teal-700">Input Data Medis</h2>
+                    <input type="date" id="tanggal" class="bg-slate-50 border border-slate-300 text-slate-900 text-xs rounded-lg focus:ring-teal-500 focus:border-teal-500 block p-2" onchange="cekDataTanggalIni()">
                 </div>
                 
                 <form id="hdForm" onsubmit="simpanKeCloud(event)">
-                    <input type="date" id="tanggal" class="hidden">
                     <input type="hidden" id="docId">
 
-                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 mb-4">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2">Profil & Akses</label>
-                        <div class="grid grid-cols-3 gap-2">
-                            <input type="number" id="usia" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs font-semibold focus:border-teal-500 outline-none" placeholder="Usia" oninput="simpanProfilLokal(); hitungOtomatis()">
-                            <select id="gender" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs font-semibold focus:border-teal-500 outline-none" onchange="simpanProfilLokal(); hitungOtomatis()">
-                                <option value="pria">Pria</option>
-                                <option value="wanita">Wanita</option>
-                            </select>
-                            <select id="akses" class="w-full bg-teal-50 border border-teal-300 text-teal-800 rounded-lg p-2 text-xs font-bold focus:border-teal-500 outline-none" onchange="simpanProfilLokal(); hitungOtomatis()">
-                                <option value="cimino">Cimino</option>
-                                <option value="cdl">CDL/Paha</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="border-l-4 border-orange-400 pl-3 mb-6">
-                        <h3 class="text-xs font-bold text-orange-600 uppercase mb-2">Awal Sesi (Pre-HD)</h3>
-                        
+                    <div class="mb-6">
                         <div class="flex space-x-3 mb-3">
                             <div class="w-1/2">
-                                <label class="text-[10px] font-bold text-slate-400 uppercase">Berat Kering Sebelumnya</label>
+                                <label class="text-[10px] font-bold text-slate-400 uppercase">BK Sebelumnya</label>
                                 <input type="number" step="0.01" id="beratKering" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 font-bold text-teal-700 text-lg mt-1" required oninput="hitungOtomatis()">
                             </div>
                             <div class="w-1/2">
@@ -90,66 +70,86 @@
                             </div>
                         </div>
 
+                        <div class="bg-yellow-50 p-3 rounded-xl border border-yellow-200 mb-3">
+                            <label class="text-xs font-bold text-yellow-800 block mb-1">Status Edema (Bengkak)</label>
+                            <select id="edemaLevel" class="w-full bg-white border border-yellow-300 text-yellow-900 text-sm rounded-lg p-2 font-semibold mb-2" onchange="updateDeskripsiEdema(); hitungOtomatis()">
+                                <option value="0">Normal (Tidak Ada)</option>
+                                <option value="0.25">Ringan (+0.25 L)</option>
+                                <option value="0.5">Sedang (+0.50 L)</option>
+                                <option value="1">Berat (+1.00 L)</option>
+                            </select>
+                            <p id="edemaDesc" class="text-[10px] text-yellow-700 italic bg-yellow-100 p-2 rounded border border-yellow-200">
+                                Kondisi normal, tidak ada penumpukan cairan.
+                            </p>
+                        </div>
+
+                        <div class="flex space-x-3 items-end mb-2">
+                             <div class="w-1/2">
+                                 <label class="text-[10px] font-bold text-slate-400 uppercase">Makan/Minum (L)</label>
+                                 <input type="number" step="0.01" id="intake" class="w-full bg-white border border-blue-200 rounded-lg p-2 text-sm font-semibold text-blue-800" placeholder="0" oninput="hitungOtomatis()">
+                             </div>
+                             <div class="w-1/2">
+                                <label class="text-[10px] font-bold text-teal-600 uppercase">UF GOAL (L)</label>
+                                <input type="number" step="0.01" id="valUF" class="w-full bg-slate-800 border-2 border-teal-500 rounded-xl p-2 font-bold text-teal-400 text-2xl text-center" value="0.00">
+                             </div>
+                        </div>
+                        <p class="text-[9px] text-slate-400 text-right italic">*UF Goal menghitung otomatis, tapi bisa Anda edit manual.</p>
+                    </div>
+
+                    <div class="border-t border-slate-100 pt-4 mb-4">
+                        <h3 class="text-xs font-bold text-slate-500 uppercase mb-3">Tanda Vital (Pre-HD)</h3>
                         <div class="flex space-x-3">
-                            <div class="w-1/2">
+                            <div class="w-1/2 relative">
                                 <label class="text-[10px] font-bold text-slate-400 uppercase">Tensi Awal</label>
-                                <input type="text" id="tensiPre" class="w-full bg-white border border-slate-300 rounded-xl p-2 font-bold text-slate-600 text-md mt-1" placeholder="120/80">
+                                <input type="text" id="tensiPre" class="w-full pl-8 bg-white border border-slate-300 rounded-xl p-2 font-semibold text-slate-600" placeholder="120/80">
+                                <i class="fas fa-stethoscope absolute left-3 top-8 text-slate-300"></i>
                             </div>
-                            <div class="w-1/2">
-                                <label class="text-[10px] font-bold text-slate-400 uppercase">Tingkat Edema</label>
-                                <select id="edemaLevel" class="w-full bg-white border border-yellow-300 text-yellow-900 text-xs rounded-xl p-2.5 font-semibold mt-1" onchange="hitungOtomatis()">
-                                    <option value="0">Normal</option>
-                                    <option value="0.5">Ringan (+0.5)</option>
-                                    <option value="1">Sedang (+1.0)</option>
-                                    <option value="2">Berat (+2.0)</option>
-                                </select>
+                            <div class="w-1/2 relative">
+                                <label class="text-[10px] font-bold text-slate-400 uppercase">Nadi Awal</label>
+                                <input type="number" id="nadiPre" class="w-full pl-8 bg-white border border-slate-300 rounded-xl p-2 font-semibold text-slate-600" placeholder="80">
+                                <i class="fas fa-heartbeat absolute left-3 top-8 text-slate-300"></i>
                             </div>
-                        </div>
-                        <div class="mt-3">
-                             <label class="text-[10px] font-bold text-slate-400 uppercase">Makan/Minum (L)</label>
-                             <input type="number" step="0.01" id="intake" class="w-full bg-white border border-blue-200 rounded-lg p-2 text-sm font-semibold text-blue-800" placeholder="0" oninput="hitungOtomatis()">
                         </div>
                     </div>
 
-                    <div class="bg-slate-800 p-4 rounded-2xl mb-6 text-center text-white shadow-lg">
-                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Target Penarikan (UF)</p>
-                        <h3 id="valUF" class="text-4xl font-black text-teal-400 my-1">0.00 <span class="text-lg text-slate-400">L</span></h3>
-                        
-                        <div class="grid grid-cols-2 gap-2 mt-3 border-t border-slate-600 pt-2">
-                             <div>
-                                 <p class="text-[9px] text-slate-400">DURASI (Max 5 Jam)</p>
-                                 <p class="font-bold text-lg"><span id="saranJam">4.0</span> <span class="text-xs font-normal">Jam</span></p>
-                             </div>
-                             <div>
-                                 <p class="text-[9px] text-slate-400">Qb (Pompa)</p>
-                                 <p class="font-bold text-lg text-red-400"><span id="saranQb">0</span></p>
-                             </div>
-                        </div>
-                        <p id="saranNote" class="text-[9px] text-slate-400 mt-2 italic">Speed Normal</p>
-                    </div>
-
-                    <div class="border-l-4 border-green-400 pl-3 mb-6 bg-green-50/50 p-2 rounded-r-xl">
-                        <h3 class="text-xs font-bold text-green-600 uppercase mb-2 flex items-center">
-                            Akhir Sesi (Post-HD)
-                            <span class="ml-2 text-[9px] bg-green-200 text-green-800 px-2 rounded-full">Diisi Belakangan</span>
+                    <div class="bg-green-50 p-4 rounded-xl border border-green-200 mb-6">
+                        <h3 class="text-xs font-bold text-green-700 uppercase mb-3 flex justify-between">
+                            <span>Post-HD (Pulang)</span>
+                            <span class="text-[9px] bg-white px-2 py-0.5 rounded border border-green-200">Isi Belakangan</span>
                         </h3>
                         
-                        <div class="flex space-x-3">
+                        <div class="flex space-x-3 mb-3">
                             <div class="w-1/2">
-                                <label class="text-[10px] font-bold text-slate-400 uppercase">Berat Pulang</label>
-                                <input type="number" step="0.01" id="beratSesudah" class="w-full bg-white border border-green-300 rounded-xl p-2 font-bold text-green-700 text-lg mt-1 focus:ring-2 focus:ring-green-500 outline-none" placeholder="...">
+                                <label class="text-[10px] font-bold text-green-600 uppercase">Berat Pulang</label>
+                                <input type="number" step="0.01" id="beratSesudah" class="w-full bg-white border border-green-300 rounded-xl p-2 font-bold text-green-700 text-lg outline-none focus:ring-2 focus:ring-green-500">
                             </div>
                             <div class="w-1/2">
-                                <label class="text-[10px] font-bold text-slate-400 uppercase">Tensi Pulang</label>
-                                <input type="text" id="tensiPost" class="w-full bg-white border border-green-300 rounded-xl p-2 font-bold text-green-700 text-md mt-1 focus:ring-2 focus:ring-green-500 outline-none" placeholder="120/80">
+                                <label class="text-[10px] font-bold text-green-600 uppercase">Tensi Pulang</label>
+                                <input type="text" id="tensiPost" class="w-full bg-white border border-green-300 rounded-xl p-2 font-bold text-green-700 outline-none focus:ring-2 focus:ring-green-500" placeholder="110/70">
                             </div>
                         </div>
+                        <div class="w-1/2 pr-1.5">
+                             <label class="text-[10px] font-bold text-green-600 uppercase">Nadi Pulang</label>
+                             <input type="number" id="nadiPost" class="w-full bg-white border border-green-300 rounded-xl p-2 font-bold text-green-700 outline-none" placeholder="80">
+                        </div>
+                    </div>
+
+                    <div class="hidden">
+                        <input type="number" id="usia">
+                        <select id="gender"><option value="pria">Pria</option><option value="wanita">Wanita</option></select>
                     </div>
 
                     <button type="submit" id="btnSimpan" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-4 rounded-xl shadow-lg transition transform active:scale-95 flex justify-center items-center">
-                        <span id="btnText">Simpan Data</span> <i class="fas fa-cloud-upload-alt ml-2"></i>
+                        <span id="btnText">Simpan Data</span> <i class="fas fa-save ml-2"></i>
                     </button>
                 </form>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl shadow-md mb-6 border border-slate-100">
+                <h2 class="text-xs font-bold text-slate-400 uppercase mb-3 tracking-wider">Grafik Berat Badan</h2>
+                <div class="h-64 relative">
+                    <canvas id="hdChart"></canvas>
+                </div>
             </div>
 
             <div class="bg-white p-5 rounded-2xl shadow-md border border-slate-100 mb-10">
@@ -161,7 +161,7 @@
                                 <th class="px-2 py-3 font-bold">Tgl</th>
                                 <th class="px-2 py-3 font-bold text-orange-500">Pre</th>
                                 <th class="px-2 py-3 font-bold text-green-600">Post</th>
-                                <th class="px-2 py-3 font-bold text-right">Tensi</th>
+                                <th class="px-2 py-3 font-bold text-right">UF</th>
                             </tr>
                         </thead>
                         <tbody id="historyTableBody"></tbody>
@@ -176,7 +176,7 @@
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, updateDoc, doc, query, where, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // --- KONFIGURASI HEMOCARE ---
+        // KONFIGURASI FIREBASE (GANTI API KEY ANDA)
         const firebaseConfig = {
             apiKey: "AIzaSyAvDP_wO_3GoP-dNIkYtJ9n7e69s_5EihQ",
             authDomain: "hemocare-8e0fa.firebaseapp.com",
@@ -191,7 +191,9 @@
         const db = getFirestore(app);
         const provider = new GoogleAuthProvider();
         let currentUser = null;
+        let historyCache = []; // Menyimpan data agar tidak bolak balik request
 
+        // AUTH
         window.loginGoogle = () => signInWithPopup(auth, provider).catch(e => alert("Login Gagal: " + e.message));
         window.logout = () => signOut(auth).then(() => location.reload());
 
@@ -202,8 +204,12 @@
                 document.getElementById('loginPage').classList.remove('flex');
                 document.getElementById('mainApp').classList.remove('hidden');
                 document.getElementById('userName').innerText = user.displayName.split(" ")[0];
-                loadProfilLokal(); 
-                loadDataCloud(); // Ini akan auto-cek data hari ini
+                
+                // Set default tanggal hari ini
+                const todayStr = new Date().toISOString().split('T')[0];
+                document.getElementById('tanggal').value = todayStr;
+                
+                loadDataCloud(); // Load data
             } else {
                 currentUser = null;
                 document.getElementById('loginPage').classList.remove('hidden');
@@ -212,210 +218,230 @@
             }
         });
 
-        window.simpanProfilLokal = () => {
-            localStorage.setItem('hemo_usia', document.getElementById('usia').value);
-            localStorage.setItem('hemo_gender', document.getElementById('gender').value);
-            localStorage.setItem('hemo_akses', document.getElementById('akses').value);
-        };
+        // --- LOGIKA EDEMA & DESKRIPSI ---
+        window.updateDeskripsiEdema = () => {
+            const val = parseFloat(document.getElementById('edemaLevel').value);
+            const desc = document.getElementById('edemaDesc');
+            
+            if(val === 0) desc.innerText = "Kondisi normal, tidak ada penumpukan cairan.";
+            else if(val === 0.25) desc.innerText = "RINGAN: Bengkak sedikit di punggung kaki/mata kaki (Pitting +1).";
+            else if(val === 0.5) desc.innerText = "SEDANG: Bengkak terlihat jelas sampai betis (Pitting +2).";
+            else if(val === 1.0) desc.innerText = "BERAT: Bengkak meluas sampai paha, perut, atau seluruh tubuh.";
+        }
 
-        window.loadProfilLokal = () => {
-            const u = localStorage.getItem('hemo_usia');
-            const g = localStorage.getItem('hemo_gender');
-            const a = localStorage.getItem('hemo_akses');
-            if(u) document.getElementById('usia').value = u;
-            if(g) document.getElementById('gender').value = g;
-            if(a) document.getElementById('akses').value = a;
-        };
-
-        const today = new Date();
-        const todayStr = today.toISOString().split('T')[0]; // YYYY-MM-DD
-        document.getElementById('tanggal').value = todayStr;
-        document.getElementById('tglHariIni').innerText = today.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'short' });
-
+        // --- HITUNG OTOMATIS ---
         window.hitungOtomatis = () => {
             let bKering = parseFloat(document.getElementById('beratKering').value) || 0;
             let bBasah = parseFloat(document.getElementById('beratBasah').value) || 0;
             let inputIntake = document.getElementById('intake').value;
             let edemaVal = parseFloat(document.getElementById('edemaLevel').value) || 0;
-            
-            let usia = parseInt(document.getElementById('usia').value) || 50;
-            let gender = document.getElementById('gender').value;
-            let akses = document.getElementById('akses').value; 
-
             let intakeVal = inputIntake === "" ? 0 : parseFloat(inputIntake);
+            
             let idwg = bBasah - bKering;
             if(idwg < 0) idwg = 0;
             
             let totalUF = idwg + intakeVal + edemaVal;
 
-            // Logika Waktu
-            let speedFactor = 13; 
-            if(usia > 60) speedFactor = 10; 
-            if(gender === 'wanita') speedFactor -= 1; 
-            let maxUFR = (bKering * speedFactor) / 1000; 
-            let calculatedJam = (maxUFR > 0) ? totalUF / maxUFR : 0;
-            let finalJam = calculatedJam;
-            if(finalJam < 4.0) finalJam = 4.0;
-            if(finalJam > 5.0) finalJam = 5.0;
-
-            // Logika Qb
-            let targetQb = bKering * 4;
-            if(akses === 'cdl') { if(targetQb > 230) targetQb = 230; }
-            if(usia > 70) { if(targetQb > 250) targetQb = 250; }
-            targetQb = Math.floor(targetQb / 10) * 10;
-            if(targetQb < 150) targetQb = 150;
-
-            // Render
-            document.getElementById('valUF').innerText = totalUF.toFixed(2);
-            document.getElementById('saranJam').innerText = finalJam.toFixed(1);
-            document.getElementById('saranQb').innerText = targetQb;
-            
-            let realSpeed = (finalJam > 0) ? (totalUF / finalJam).toFixed(2) : 0;
-            let noteElement = document.getElementById('saranNote');
-            if(realSpeed > 0.85) {
-                noteElement.innerText = `⚠️ SPEED: ${realSpeed} L/jam!`;
-                noteElement.classList.add('text-red-400', 'font-bold', 'animate-pulse');
-            } else {
-                noteElement.innerText = `Speed Aman: ${realSpeed} L/jam`;
-                noteElement.classList.remove('text-red-400', 'font-bold', 'animate-pulse');
-            }
+            // Update Input UF (Hanya value-nya, user bisa edit manual setelah ini)
+            // Kita gunakan cek sederhana: Jika input UF kosong atau user sedang tidak mengetik di UF, update.
+            // Agar simple: Kita update saja, kalau user mau edit manual, mereka edit setelah input BB.
+            document.getElementById('valUF').value = totalUF.toFixed(2);
         };
 
-        // --- LOGIKA SIMPAN / UPDATE ---
+        // --- CEK DATA SAAT GANTI TANGGAL ---
+        window.cekDataTanggalIni = () => {
+            const tglPilihan = document.getElementById('tanggal').value;
+            
+            // Cari di cache apakah tanggal ini ada datanya?
+            const dataAda = historyCache.find(item => item.date === tglPilihan);
+            
+            if(dataAda) {
+                // ISI FORM DENGAN DATA LAMA (MODE EDIT)
+                document.getElementById('docId').value = dataAda.id;
+                document.getElementById('beratKering').value = dataAda.bk;
+                document.getElementById('beratBasah').value = dataAda.bb;
+                document.getElementById('intake').value = dataAda.intake;
+                document.getElementById('valUF').value = dataAda.uf; // Load manual UF yang tersimpan
+                document.getElementById('edemaLevel').value = dataAda.edema_level || 0;
+                updateDeskripsiEdema();
+
+                // Vital Signs
+                document.getElementById('tensiPre').value = dataAda.tensi_pre || "";
+                document.getElementById('nadiPre').value = dataAda.nadi_pre || "";
+                
+                // Post Data
+                document.getElementById('beratSesudah').value = dataAda.bb_sesudah || "";
+                document.getElementById('tensiPost').value = dataAda.tensi_post || "";
+                document.getElementById('nadiPost').value = dataAda.nadi_post || "";
+
+                // Ubah Tombol
+                document.getElementById('btnText').innerText = "Update Data Tanggal Ini";
+                document.getElementById('btnSimpan').classList.replace('bg-teal-600', 'bg-blue-600');
+            } else {
+                // RESET FORM (MODE BARU)
+                document.getElementById('docId').value = "";
+                // Jangan reset Berat Kering, biarkan dari data terakhir untuk kemudahan
+                document.getElementById('beratBasah').value = "";
+                document.getElementById('intake').value = "";
+                document.getElementById('valUF').value = "0.00";
+                document.getElementById('edemaLevel').value = 0;
+                updateDeskripsiEdema();
+                
+                // Reset Vitals
+                document.getElementById('tensiPre').value = "";
+                document.getElementById('nadiPre').value = "";
+                document.getElementById('beratSesudah').value = "";
+                document.getElementById('tensiPost').value = "";
+                document.getElementById('nadiPost').value = "";
+
+                document.getElementById('btnText').innerText = "Simpan Data Baru";
+                document.getElementById('btnSimpan').classList.replace('bg-blue-600', 'bg-teal-600');
+            }
+        }
+
+        // --- DATABASE LOAD ---
+        async function loadDataCloud() {
+            if(!currentUser) return;
+
+            // Query: Ambil semua data user, urutkan tanggal descending (terbaru di atas)
+            // NOTE: Jika error "Index", cek console browser!
+            const q = query(collection(db, "riwayat_hd"), where("uid", "==", currentUser.uid), orderBy("date", "desc"));
+
+            try {
+                const querySnapshot = await getDocs(q);
+                historyCache = []; // Reset cache
+                const tbody = document.getElementById('historyTableBody');
+                tbody.innerHTML = '';
+
+                querySnapshot.forEach((docSnap) => {
+                    const item = docSnap.data();
+                    item.id = docSnap.id;
+                    historyCache.push(item);
+
+                    // Render Tabel
+                    let displayBBSesudah = item.bb_sesudah ? `<strong>${item.bb_sesudah}</strong>` : '-';
+                    let displayTensi = item.tensi_pre ? `<div class="text-[9px]">${item.tensi_pre}</div>` : '-';
+                    
+                    let row = `
+                        <tr class="bg-white border-b hover:bg-slate-50 transition">
+                            <td class="px-2 py-3 text-xs text-slate-500">${item.date.split('-')[2]}/${item.date.split('-')[1]}</td>
+                            <td class="px-2 py-3 text-xs text-orange-600 font-medium">${item.bb}</td>
+                            <td class="px-2 py-3 text-xs text-green-600">${displayBBSesudah}</td>
+                            <td class="px-2 py-3 font-bold text-slate-800 text-right">${item.uf}L</td>
+                        </tr>
+                    `;
+                    tbody.insertAdjacentHTML('beforeend', row);
+                });
+
+                // Setelah data dimuat, cek form
+                cekDataTanggalIni();
+                
+                // Update Grafik (Balik array agar grafik dari kiri(lama) ke kanan(baru))
+                updateChartCloud([...historyCache].reverse());
+
+            } catch (error) {
+                console.error("Error Load Data:", error);
+                alert("Gagal memuat data. Jika ini pertama kali, cek Console Browser untuk link Index Firestore.");
+            }
+        }
+
+        // --- SIMPAN DATA ---
         window.simpanKeCloud = async (e) => {
             e.preventDefault();
             if(!currentUser) return alert("Silahkan login ulang.");
 
-            const btn = document.getElementById('btnSimpan');
             const btnText = document.getElementById('btnText');
-            const originalText = btnText.innerText;
+            const btn = document.getElementById('btnSimpan');
             btnText.innerText = "Menyimpan...";
             btn.disabled = true;
-
-            // Ambil nilai input
-            const intakeVal = document.getElementById('intake').value === "" ? 0 : parseFloat(document.getElementById('intake').value);
-            const bbSesudahVal = document.getElementById('beratSesudah').value === "" ? null : parseFloat(document.getElementById('beratSesudah').value);
-            const edemaVal = parseFloat(document.getElementById('edemaLevel').value) || 0;
-            const tensiPreVal = document.getElementById('tensiPre').value;
-            const tensiPostVal = document.getElementById('tensiPost').value;
-            
-            // Cek apakah kita sedang UPDATE data yang sudah ada (Edit Mode)
-            const docId = document.getElementById('docId').value;
 
             const dataPayload = {
                 uid: currentUser.uid,
                 date: document.getElementById('tanggal').value,
                 bk: parseFloat(document.getElementById('beratKering').value),
                 bb: parseFloat(document.getElementById('beratBasah').value),
-                bb_sesudah: bbSesudahVal,
-                tensi_pre: tensiPreVal, // Tensi Awal
-                tensi_post: tensiPostVal, // Tensi Akhir
-                intake: intakeVal,
-                uf: document.getElementById('valUF').innerText,
-                edema_level: edemaVal,
+                
+                // Vitals Pre
+                tensi_pre: document.getElementById('tensiPre').value,
+                nadi_pre: document.getElementById('nadiPre').value,
+                
+                // Faktor Hitung
+                intake: parseFloat(document.getElementById('intake').value) || 0,
+                edema_level: parseFloat(document.getElementById('edemaLevel').value) || 0,
+                
+                // Hasil (Manual/Auto)
+                uf: document.getElementById('valUF').value, 
+
+                // Post Data (Bisa Null)
+                bb_sesudah: document.getElementById('beratSesudah').value ? parseFloat(document.getElementById('beratSesudah').value) : null,
+                tensi_post: document.getElementById('tensiPost').value,
+                nadi_post: document.getElementById('nadiPost').value,
+
                 timestamp: new Date()
             };
 
+            const docId = document.getElementById('docId').value;
+
             try {
                 if (docId) {
-                    // --- MODE UPDATE (Jika data hari ini sudah ada) ---
-                    const docRef = doc(db, "riwayat_hd", docId);
-                    await updateDoc(docRef, dataPayload);
-                    alert("Data berhasil diperbarui (Update)!");
+                    // UPDATE
+                    await updateDoc(doc(db, "riwayat_hd", docId), dataPayload);
+                    alert("Data Berhasil Diupdate!");
                 } else {
-                    // --- MODE BUAT BARU ---
+                    // BARU
                     await addDoc(collection(db, "riwayat_hd"), dataPayload);
-                    alert("Data baru tersimpan!");
+                    alert("Data Baru Tersimpan!");
                 }
-                
-                await loadDataCloud(); // Refresh table & form status
+                await loadDataCloud();
             } catch (error) {
                 console.error(error);
                 alert("Gagal menyimpan: " + error.message);
             } finally {
-                btnText.innerText = originalText;
+                btnText.innerText = "Simpan Data";
                 btn.disabled = false;
             }
         };
 
-        async function loadDataCloud() {
-            if(!currentUser) return;
+        // --- CHART JS ---
+        let myChart = null;
+        function updateChartCloud(data) {
+            const ctx = document.getElementById('hdChart').getContext('2d');
+            if (myChart) myChart.destroy();
+            
+            // Ambil 7 data terakhir saja
+            const recentData = data.slice(-7);
 
-            const q = query(collection(db, "riwayat_hd"), where("uid", "==", currentUser.uid), orderBy("date", "desc")); // Descending agar terbaru diatas
-
-            try {
-                const querySnapshot = await getDocs(q);
-                let historyData = [];
-                const tbody = document.getElementById('historyTableBody');
-                tbody.innerHTML = '';
-
-                let todayDataFound = false;
-
-                querySnapshot.forEach((docSnap) => {
-                    const item = docSnap.data();
-                    item.id = docSnap.id; // Simpan ID Dokumen
-                    historyData.push(item);
-
-                    // --- LOGIKA AUTO-FILL HARI INI ---
-                    if (item.date === todayStr && !todayDataFound) {
-                        todayDataFound = true;
-                        // Isi form dengan data yang sudah ada
-                        document.getElementById('docId').value = item.id; // Set ID untuk mode update
-                        document.getElementById('beratKering').value = item.bk;
-                        document.getElementById('beratBasah').value = item.bb;
-                        document.getElementById('intake').value = item.intake;
-                        document.getElementById('edemaLevel').value = item.edema_level || 0;
-                        document.getElementById('tensiPre').value = item.tensi_pre || "";
-                        
-                        // Isi Data Post jika sudah ada
-                        if(item.bb_sesudah) document.getElementById('beratSesudah').value = item.bb_sesudah;
-                        if(item.tensi_post) document.getElementById('tensiPost').value = item.tensi_post;
-
-                        // Ubah Tombol jadi "Update"
-                        document.getElementById('btnText').innerText = "Update Data Hari Ini";
-                        document.getElementById('btnSimpan').classList.remove('bg-teal-600');
-                        document.getElementById('btnSimpan').classList.add('bg-blue-600');
-                        
-                        // Hitung ulang rumus
-                        hitungOtomatis();
-                    }
-
-                    // Render Tabel
-                    let displayBBSesudah = item.bb_sesudah ? `<strong>${item.bb_sesudah}</strong>` : '-';
-                    let displayTensi = `${item.tensi_pre || '-'} <i class="fas fa-arrow-right text-[8px]"></i> ${item.tensi_post || '-'}`;
-                    
-                    let row = `
-                        <tr class="bg-white border-b hover:bg-slate-50 transition">
-                            <td class="px-2 py-3 text-xs text-slate-500">${formatTglIndo(item.date)}</td>
-                            <td class="px-2 py-3 text-xs text-orange-600 font-medium">${item.bb}</td>
-                            <td class="px-2 py-3 text-xs text-green-600">${displayBBSesudah}</td>
-                            <td class="px-2 py-3 text-[10px] text-slate-600">${displayTensi}</td>
-                        </tr>
-                    `;
-                    tbody.insertAdjacentHTML('beforeend', row);
-                });
-
-                // Jika TIDAK ada data hari ini, pastikan form bersih (kecuali BK terakhir)
-                if (!todayDataFound && historyData.length > 0) {
-                    document.getElementById('docId').value = ""; // Reset ID
-                    document.getElementById('btnText').innerText = "Simpan Data Baru";
-                    document.getElementById('btnSimpan').classList.add('bg-teal-600');
-                    document.getElementById('btnSimpan').classList.remove('bg-blue-600');
-                    
-                    // Ambil BK dari sesi sebelumnya
-                    document.getElementById('beratKering').value = historyData[0].bk; // Ambil data ke-0 karena sudah sorted desc
+            myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: recentData.map(d => `${d.date.split('-')[2]}/${d.date.split('-')[1]}`),
+                    datasets: [
+                        {
+                            label: 'Berat Kering',
+                            data: recentData.map(d => d.bk),
+                            borderColor: '#0d9488',
+                            backgroundColor: 'rgba(13, 148, 136, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.3
+                        },
+                        {
+                            label: 'Berat Datang',
+                            data: recentData.map(d => d.bb),
+                            borderColor: '#f97316',
+                            borderDash: [5, 5],
+                            borderWidth: 2,
+                            tension: 0.3
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } }
                 }
-
-            } catch (error) {
-                console.log("Error load data", error);
-            }
-        }
-
-        function formatTglIndo(dateString) {
-            const parts = dateString.split('-');
-            return `${parts[2]}/${parts[1]}`;
+            });
         }
     </script>
 </body>
 </html>
-
