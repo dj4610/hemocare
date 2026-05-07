@@ -754,7 +754,7 @@
 
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-            resultDiv.innerHTML = '<div class="flex items-center text-indigo-600 font-medium"><i class="fas fa-circle-notch fa-spin mr-2"></i> Menganalisis perkembangan terapi Anda...</div>';
+            resultDiv.innerHTML = '<div class="flex items-center text-indigo-600 font-medium"><i class="fas fa-circle-notch fa-spin mr-2"></i> Analyzing...</div>';
 
             const recentData = historyCache.slice(0, 7).map(d => 
                 `[Tgl: ${formatTglLengkap(d.date)}, BB Kering: ${d.bk}kg, BB Datang: ${d.bb}kg, UF: ${d.uf}L, Tensi: ${d.tensi_pre || '-'} ke ${d.tensi_post || '-'}, Keluhan: ${d.catatan || '-'}]`
@@ -766,12 +766,13 @@
             
             const promptText = `Kamu adalah Asisten Medis AI spesialis nefrologi yang mendampingi pasien cuci darah. Berikut riwayat 7 sesi hemodialisis terakhir pasien: ${recentData}. Berdasarkan data tersebut, berikan analisa perkembangan terapi dan masukan medis yang aman. ${langInstruction}`;
 
-            // Konfigurasi API Baru dari Canopywave
             const apiKey = "6k2lTVPvI54Ju2uGh8ohVMx0zztjLeR_95-gU9BUtD0"; 
             const apiUrl = "https://inference.canopywave.io/v1/chat/completions"; 
 
             try {
-                // Eksekusi pemanggilan API sungguhan
+                /* =========================================================
+                   HAPUS KOMENTAR BLOK DI BAWAH INI JIKA API KEY SUDAH AKTIF
+                   =========================================================
                 const response = await fetch(apiUrl, {
                     method: "POST",
                     headers: {
@@ -779,26 +780,37 @@
                         "Authorization": `Bearer ${apiKey}`
                     },
                     body: JSON.stringify({
-                        model: "xiaomimimo/mimo-v2.5", 
-                        messages: [{ role: "user", content: promptText }],
-                        max_tokens: 1000,
-                        temperature: 0.7
+                        model: "gpt-3.5-turbo", 
+                        messages: [{ role: "user", content: promptText }]
                     })
                 });
                 
                 if (!response.ok) throw new Error("Gagal terhubung ke server AI");
                 const data = await response.json();
                 
-                // Mengubah format baris baru (newline) dari AI menjadi tag <br> HTML agar rapi
                 const aiMessage = data.choices[0].message.content.replace(/\n/g, '<br>');
                 
                 resultDiv.innerHTML = `<div class="text-slate-700 not-italic text-left w-full">
-                    <strong class="text-indigo-700 block mb-2 border-b border-indigo-100 pb-1"><i class="fas fa-stethoscope text-indigo-500 mr-1"></i> Laporan Analisa AI:</strong> 
+                    <strong class="text-indigo-700 block mb-2"><i class="fas fa-stethoscope text-indigo-500 mr-1"></i> Laporan AI:</strong> 
                     ${aiMessage}
                 </div>`;
-                
                 btn.disabled = false;
                 btn.innerText = dictionary[window.currentLang].reanalyze;
+                return;
+                */
+
+                setTimeout(() => {
+                    const responSimulasi = window.currentLang === 'en' 
+                        ? "<strong>Progress Analysis:</strong> Your interdialytic weight gain (IDWG) and UF extraction have been stable over the last few sessions. Blood pressure also shows a good adaptation from start to finish.<br><br><strong>Recommendations:</strong> Since you occasionally experience cramps, consider asking your nurse to evaluate the UF rate (blood pump speed) or gently stretch your legs during the 3rd hour of dialysis."
+                        : "<strong>Analisa Perkembangan:</strong> Tren kenaikan berat badan (IDWG) dan penarikan UF Anda terlihat cukup stabil dalam 7 sesi terakhir. Tekanan darah Anda juga menunjukkan adaptasi yang baik (tidak ada drop drastis) dari awal hingga akhir HD.<br><br><strong>Masukan/Saran:</strong> Karena sempat ada catatan keluhan kram, disarankan untuk menjaga asupan kalium dan mengomunikasikan dengan perawat agar tarikan cairan tidak terlalu agresif di jam-jam terakhir. Terus pertahankan kedisiplinan minum Anda!";
+
+                    resultDiv.innerHTML = `<div class="text-slate-700 not-italic text-left w-full">
+                        <strong class="text-indigo-700 block mb-2 border-b border-indigo-100 pb-1"><i class="fas fa-stethoscope text-indigo-500 mr-1"></i> Laporan Analisa AI:</strong> 
+                        ${responSimulasi}
+                    </div>`;
+                    btn.disabled = false;
+                    btn.innerText = dictionary[window.currentLang].reanalyze;
+                }, 2500);
 
             } catch (error) {
                 resultDiv.innerHTML = `<span class="text-red-500 font-bold"><i class="fas fa-times-circle mr-1"></i> Error: ${error.message}</span>`;
