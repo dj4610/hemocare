@@ -754,43 +754,56 @@
 
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-            resultDiv.innerHTML = '<div class="flex items-center text-indigo-600 font-medium"><i class="fas fa-circle-notch fa-spin mr-2"></i> Analyzing...</div>';
+            resultDiv.innerHTML = '<div class="flex items-center text-indigo-600 font-medium"><i class="fas fa-circle-notch fa-spin mr-2"></i> Menganalisis perkembangan terapi Anda...</div>';
 
-            const recentData = historyCache.slice(0, 5).map(d => 
-                `[Tgl: ${formatTglLengkap(d.date)}, BB Datang: ${d.bb}kg, BB Kering: ${d.bk}kg, Tarikan UF: ${d.uf}L, Keluhan: ${d.catatan || '-'}]`
+            const recentData = historyCache.slice(0, 7).map(d => 
+                `[Tgl: ${formatTglLengkap(d.date)}, BB Kering: ${d.bk}kg, BB Datang: ${d.bb}kg, UF: ${d.uf}L, Tensi: ${d.tensi_pre || '-'} ke ${d.tensi_post || '-'}, Keluhan: ${d.catatan || '-'}]`
             ).join(' | ');
 
-            const langInstruction = window.currentLang === 'en' ? 'Use empathetic and simple English.' : 'Gunakan bahasa Indonesia yang empatik dan mudah dimengerti pasien.';
-            const promptText = `Kamu adalah Asisten Medis AI spesialis nefrologi untuk aplikasi jurnal pasien hemodialisis. Berikut adalah riwayat 5 sesi terakhir pasien: ${recentData}. Tugasmu: Berikan analisis singkat (maksimal 3 kalimat) mengenai tren kenaikan berat badan antar dialisis (IDWG) pasien ini. Berikan peringatan dini jika ada risiko kesehatan atau saran praktis berdasarkan catatan keluhannya. ${langInstruction}`;
+            const langInstruction = window.currentLang === 'en' 
+                ? 'Respond in empathetic English. Structure your response into two short paragraphs: 1. Progress Analysis (trends in weight, BP, and UF) and 2. Recommendations/Advice.' 
+                : 'Gunakan bahasa Indonesia yang empatik. Buat jawaban menjadi 2 paragraf singkat: 1. Analisa Perkembangan (tren berat badan, kestabilan tensi, dan target UF) dan 2. Masukan/Saran Praktis untuk pasien.';
+            
+            const promptText = `Kamu adalah Asisten Medis AI spesialis nefrologi yang mendampingi pasien cuci darah. Berikut riwayat 7 sesi hemodialisis terakhir pasien: ${recentData}. Berdasarkan data tersebut, berikan analisa perkembangan terapi dan masukan medis yang aman. ${langInstruction}`;
 
+            // Konfigurasi API Baru dari Canopywave
             const apiKey = "6k2lTVPvI54Ju2uGh8ohVMx0zztjLeR_95-gU9BUtD0"; 
             const apiUrl = "https://inference.canopywave.io/v1/chat/completions"; 
 
             try {
-                setTimeout(() => {
-                    const keluhanTerakhir = historyCache[0].catatan;
-                    let responSimulasi = window.currentLang === 'en' 
-                        ? "Your interdialytic weight gain (IDWG) trend is stable and within safe limits. Continue to be disciplined in limiting fluid intake."
-                        : "Tren kenaikan berat badan (IDWG) Anda stabil dan berada di batas aman. Lanjutkan disiplin dalam membatasi asupan cairan.";
-                    
-                    if(keluhanTerakhir) {
-                        responSimulasi = window.currentLang === 'en'
-                            ? `AI detected a recent complaint of "${keluhanTerakhir}". Your UF extraction trend is relatively high. Consider limiting salt intake to reduce thirst and prevent complications in the next session.`
-                            : `AI mendeteksi adanya riwayat keluhan "${keluhanTerakhir}". Tren tarikan UF Anda cenderung tinggi. Pertimbangkan untuk membatasi asupan garam untuk mengurangi rasa haus dan cegah komplikasi di sesi berikutnya.`;
-                    }
-
-                    resultDiv.innerHTML = `<div class="text-slate-700 not-italic">
-                        <strong class="text-indigo-700 block mb-1"><i class="fas fa-lightbulb text-yellow-500 mr-1"></i> AI Insight:</strong> 
-                        ${responSimulasi}
-                    </div>`;
-                    btn.disabled = false;
-                    btn.innerText = dictionary[window.currentLang].reanalyze;
-                }, 2000);
+                // Eksekusi pemanggilan API sungguhan
+                const response = await fetch(apiUrl, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: "xiaomimimo/mimo-v2.5", 
+                        messages: [{ role: "user", content: promptText }],
+                        max_tokens: 1000,
+                        temperature: 0.7
+                    })
+                });
+                
+                if (!response.ok) throw new Error("Gagal terhubung ke server AI");
+                const data = await response.json();
+                
+                // Mengubah format baris baru (newline) dari AI menjadi tag <br> HTML agar rapi
+                const aiMessage = data.choices[0].message.content.replace(/\n/g, '<br>');
+                
+                resultDiv.innerHTML = `<div class="text-slate-700 not-italic text-left w-full">
+                    <strong class="text-indigo-700 block mb-2 border-b border-indigo-100 pb-1"><i class="fas fa-stethoscope text-indigo-500 mr-1"></i> Laporan Analisa AI:</strong> 
+                    ${aiMessage}
+                </div>`;
+                
+                btn.disabled = false;
+                btn.innerText = dictionary[window.currentLang].reanalyze;
 
             } catch (error) {
                 resultDiv.innerHTML = `<span class="text-red-500 font-bold"><i class="fas fa-times-circle mr-1"></i> Error: ${error.message}</span>`;
                 btn.disabled = false;
-                btn.innerText = 'Retry';
+                btn.innerText = 'Coba Lagi';
             }
         };
 
