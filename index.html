@@ -527,6 +527,18 @@
             let totalUF = idwg + intakeVal + edemaVal;
             document.getElementById('valUF').value = totalUF.toFixed(2);
 
+            // --- TAMBAHAN LOGIKA WARNING IDWG > 5% ---
+            let idwgPersen = (bKering > 0) ? (idwg / bKering) * 100 : 0;
+            const inputBeratBasah = document.getElementById('beratBasah');
+            if (idwgPersen > 5) {
+                inputBeratBasah.classList.remove('border-orange-400', 'text-orange-600');
+                inputBeratBasah.classList.add('border-red-600', 'animate-pulse', 'text-red-600');
+            } else {
+                inputBeratBasah.classList.add('border-orange-400', 'text-orange-600');
+                inputBeratBasah.classList.remove('border-red-600', 'animate-pulse', 'text-red-600');
+            }
+            // -----------------------------------------
+
             let finalJam = 4.0;
             if(totalUF > 3.0 && (usia > 60 || gender === 'wanita')) {
                  let maxUFR = (bKering * 12) / 1000; 
@@ -761,10 +773,19 @@
             ).join(' | ');
 
             const langInstruction = window.currentLang === 'en' 
-                ? 'Respond in empathetic English. Structure your response into two short paragraphs: 1. Progress Analysis (trends in weight, BP, and UF) and 2. Recommendations/Advice.' 
-                : 'Gunakan bahasa Indonesia yang empatik. Buat jawaban menjadi 2 paragraf singkat: 1. Analisa Perkembangan (tren berat badan, kestabilan tensi, dan target UF) dan 2. Masukan/Saran Praktis untuk pasien.';
+                ? 'Respond in empathetic English. Structure your response into two short paragraphs: 1. Progress Analysis (trends in weight, BP, and UF) and 2. Recommendations/Advice. Include a medical disclaimer.' 
+                : 'Gunakan bahasa Indonesia yang empatik. Buat jawaban menjadi 2 paragraf singkat: 1. Analisa Perkembangan (tren berat badan, kestabilan tensi, dan target UF) dan 2. Masukan/Saran Praktis. Sertakan disclaimer bahwa ini hanya saran edukatif.';
             
-            const promptText = `Kamu adalah Asisten Medis AI spesialis nefrologi yang mendampingi pasien cuci darah. Berikut riwayat 7 sesi hemodialisis terakhir pasien: ${recentData}. Berdasarkan data tersebut, berikan analisa perkembangan terapi dan masukan medis yang aman. ${langInstruction}`;
+            const promptText = `Anda adalah Asisten Medis AI spesialis Nefrologi. 
+Tugas Anda adalah menganalisis data Hemodialisis (HD) pasien berikut: ${recentData}.
+
+Berikan perhatian khusus pada:
+1. Tekanan Darah (Tensi): Waspadai jika Sistolik >160 (Hipertensi) atau Sistolik <90 (Hipotensi/Drop).
+2. Kenaikan Berat Badan (IDWG): Waspadai jika kenaikan BB (BB Datang - BB Kering) >5% dari BB Kering.
+3. UF Goal: Berikan saran jika tarikan cairan terlalu agresif (>1 liter/jam).
+4. Keluhan: Jika ada catatan pusing, kram, atau sesak, hubungkan dengan data tensi/berat badan.
+
+${langInstruction}`;
 
             const apiKey = "6k2lTVPvI54Ju2uGh8ohVMx0zztjLeR_95-gU9BUtD0"; 
             const apiUrl = "https://inference.canopywave.io/v1/chat/completions"; 
@@ -801,8 +822,8 @@
 
                 setTimeout(() => {
                     const responSimulasi = window.currentLang === 'en' 
-                        ? "<strong>Progress Analysis:</strong> Your interdialytic weight gain (IDWG) and UF extraction have been stable over the last few sessions. Blood pressure also shows a good adaptation from start to finish.<br><br><strong>Recommendations:</strong> Since you occasionally experience cramps, consider asking your nurse to evaluate the UF rate (blood pump speed) or gently stretch your legs during the 3rd hour of dialysis."
-                        : "<strong>Analisa Perkembangan:</strong> Tren kenaikan berat badan (IDWG) dan penarikan UF Anda terlihat cukup stabil dalam 7 sesi terakhir. Tekanan darah Anda juga menunjukkan adaptasi yang baik (tidak ada drop drastis) dari awal hingga akhir HD.<br><br><strong>Masukan/Saran:</strong> Karena sempat ada catatan keluhan kram, disarankan untuk menjaga asupan kalium dan mengomunikasikan dengan perawat agar tarikan cairan tidak terlalu agresif di jam-jam terakhir. Terus pertahankan kedisiplinan minum Anda!";
+                        ? "<strong>Urgent Analysis:</strong> Your Blood Pressure reached 180/100 mmHg today (Hypertensive). Additionally, your weight gain is 4kg (above the safe 5% limit).<br><br><strong>Advice:</strong> Please limit your salt and fluid intake strictly. Consult your doctor about adjusting your blood pressure medication before the next session. <br><br><em class='text-[10px] text-slate-400'>*Disclaimer: This is an educational AI insight, not a substitute for professional medical advice.</em>"
+                        : "<strong>Analisa Mendesak:</strong> Tensi Anda menyentuh 180/100 mmHg (Hipertensi) dan kenaikan berat badan antar-dialisis melebihi batas aman 5%. <br><br><strong>Saran:</strong> Segera batasi asupan garam dan air. Konsultasikan dengan dokter spesialis Anda untuk evaluasi obat tensi sebelum sesi HD berikutnya. <br><br><em class='text-[10px] text-slate-400'>*Disclaimer: Saran AI ini bersifat edukatif dan bukan pengganti instruksi medis dari dokter/perawat unit Anda.</em>";
 
                     resultDiv.innerHTML = `<div class="text-slate-700 not-italic text-left w-full">
                         <strong class="text-indigo-700 block mb-2 border-b border-indigo-100 pb-1"><i class="fas fa-stethoscope text-indigo-500 mr-1"></i> Laporan Analisa AI:</strong> 
